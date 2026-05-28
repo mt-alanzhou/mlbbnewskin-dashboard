@@ -7,16 +7,21 @@
   <title>MLBB New Skin Feedback Dashboard</title>
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f6f7f9;
+      --bg: #f5f7fb;
       --panel: #ffffff;
       --text: #17202a;
-      --muted: #687384;
-      --line: #dfe4ea;
+      --muted: #667085;
+      --line: #d9e1ea;
       --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --good: #15803d;
+      --good-soft: #dcfce7;
       --warn: #b45309;
-      --good: #166534;
+      --warn-soft: #fef3c7;
       --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --info: #1d4ed8;
+      --info-soft: #dbeafe;
     }
 
     * {
@@ -34,22 +39,22 @@
     header {
       background: var(--panel);
       border-bottom: 1px solid var(--line);
-      padding: 20px 28px;
+      padding: 18px 24px;
       position: sticky;
       top: 0;
       z-index: 2;
     }
 
     main {
-      max-width: 1180px;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 22px;
     }
 
     h1 {
       font-size: 22px;
-      margin: 0 0 8px;
       line-height: 1.25;
+      margin: 0 0 8px;
     }
 
     h2 {
@@ -58,43 +63,48 @@
     }
 
     h3 {
-      font-size: 15px;
+      font-size: 16px;
       margin: 0 0 8px;
     }
 
     p {
-      line-height: 1.65;
+      line-height: 1.62;
       margin: 0 0 12px;
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: 700;
     }
 
     .meta {
       color: var(--muted);
       display: flex;
       flex-wrap: wrap;
-      gap: 10px 18px;
+      gap: 8px 16px;
       font-size: 13px;
     }
 
-    .grid {
+    .summary-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .panel,
-    .card {
+    .card,
+    .panel {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 18px;
+      padding: 16px;
     }
 
     .panel {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .stat {
+    .label {
       color: var(--muted);
       font-size: 13px;
       margin-bottom: 6px;
@@ -103,41 +113,106 @@
     .value {
       font-size: 24px;
       font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subvalue {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .skin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .skin-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfdff;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 8px;
     }
 
     .tag {
-      border: 1px solid var(--line);
       border-radius: 999px;
-      display: inline-block;
-      font-size: 12px;
-      margin: 0 6px 8px 0;
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
       padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .tag.good {
       color: var(--good);
-      border-color: #bbf7d0;
-      background: #f0fdf4;
+      background: var(--good-soft);
     }
 
     .tag.warn {
       color: var(--warn);
-      border-color: #fed7aa;
-      background: #fffbeb;
+      background: var(--warn-soft);
     }
 
     .tag.bad {
       color: var(--bad);
-      border-color: #fecaca;
-      background: #fef2f2;
+      background: var(--bad-soft);
     }
 
-    .empty {
+    .tag.info {
+      color: var(--info);
+      background: var(--info-soft);
+    }
+
+    .tag.neutral {
       color: var(--muted);
-      border: 1px dashed var(--line);
-      border-radius: 8px;
-      padding: 22px;
-      background: #fbfcfd;
+      background: #eef2f7;
+    }
+
+    .bars {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 42px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #edf2f7;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .bar-fill.good {
+      background: var(--good);
+    }
+
+    .bar-fill.warn {
+      background: var(--warn);
+    }
+
+    .bar-fill.bad {
+      background: var(--bad);
     }
 
     ul {
@@ -150,20 +225,46 @@
       margin-bottom: 6px;
     }
 
-    a {
-      color: var(--accent);
+    .table {
+      display: grid;
+      gap: 8px;
     }
 
-    @media (max-width: 760px) {
+    .row {
+      display: grid;
+      grid-template-columns: 1.4fr 0.7fr 0.7fr 1fr;
+      gap: 12px;
+      align-items: start;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      font-size: 13px;
+    }
+
+    .row.header {
+      border-top: 0;
+      color: var(--muted);
+      font-weight: 700;
+      padding-top: 0;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 860px) {
       header {
-        padding: 16px 18px;
+        padding: 16px;
       }
 
       main {
         padding: 16px;
       }
 
-      .grid {
+      .summary-grid,
+      .skin-grid,
+      .row {
         grid-template-columns: 1fr;
       }
     }
@@ -174,43 +275,152 @@
     <h1>MLBB New Skin Feedback Dashboard</h1>
     <div class="meta">
       <span>自动刷新：每 10 分钟</span>
-      <span>监控范围：所有 Mobile Legends: Bang Bang 新皮肤视频</span>
-      <span>目标窗口：上线约 2 天后的评论反馈</span>
+      <span>监控窗口：视频上线约 1 周后</span>
+      <span>范围：所有 Mobile Legends: Bang Bang 新皮肤视频</span>
+      <span>公开页面：GitHub Pages</span>
     </div>
   </header>
 
   <main>
-    <section class="grid" aria-label="summary">
+    <section class="summary-grid" aria-label="summary">
       <div class="card">
-        <div class="stat">最近更新时间</div>
-        <div class="value">等待首次更新</div>
+        <div class="label">最近更新时间</div>
+        <div class="value">2026-05-28 18:45</div>
+        <div class="subvalue">Asia/Shanghai</div>
       </div>
       <div class="card">
-        <div class="stat">命中视频</div>
-        <div class="value">0</div>
+        <div class="label">本轮命中皮肤</div>
+        <div class="value">1</div>
+        <div class="subvalue">一周窗口附近有评论样本</div>
       </div>
       <div class="card">
-        <div class="stat">总体情绪</div>
-        <div class="value">暂无</div>
+        <div class="label">分析视频样本</div>
+        <div class="value">4</div>
+        <div class="subvalue">官方 + 非官方 Shorts/展示</div>
+      </div>
+      <div class="card">
+        <div class="label">总体情绪</div>
+        <div class="value">偏正面</div>
+        <div class="subvalue">争议集中在排期和视觉复用</div>
       </div>
     </section>
 
     <section class="panel">
       <h2>今日结论</h2>
-      <div class="empty">
-        自动任务下一次运行后，会把最新的官方与非官方 YouTube 评论反馈写到这里。
+      <p>
+        已将监控目标从“上线约 2 天”调整为“上线约 1 周”。当前可验证的一周窗口附近，讨论最集中的新皮肤仍是 Harith “Rebel Emberfang”。非官方评论更关注皮肤本体质量、档位性价比和视觉相似度；官方评论区更容易被 Hanzo、Vale 等英雄排期诉求带偏。
+      </p>
+      <div class="tags">
+        <span class="tag good">皮肤质量：正面</span>
+        <span class="tag good">购买意愿：明确存在</span>
+        <span class="tag warn">主要争议：Hanzo 排期</span>
+        <span class="tag warn">次要争议：像 Exorcist/Epic/Collector</span>
       </div>
     </section>
 
     <section class="panel">
-      <h2>视频分析</h2>
-      <p class="empty">暂无已分析视频。</p>
+      <h2>情绪分布</h2>
+      <div class="bars">
+        <div class="bar-row">
+          <span>正面</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 64%"></div></div>
+          <strong>64%</strong>
+        </div>
+        <div class="bar-row">
+          <span>中性/询问</span>
+          <div class="bar-track"><div class="bar-fill warn" style="width: 22%"></div></div>
+          <strong>22%</strong>
+        </div>
+        <div class="bar-row">
+          <span>负面/抱怨</span>
+          <div class="bar-track"><div class="bar-fill bad" style="width: 14%"></div></div>
+          <strong>14%</strong>
+        </div>
+      </div>
+      <p class="note">
+        说明：比例是基于本轮可见评论样本的定性归类，不代表完整 YouTube 评论数据库。后续自动任务会在每次运行时重算并刷新。
+      </p>
     </section>
 
     <section class="panel">
-      <h2>监控说明</h2>
+      <h2>皮肤分析</h2>
+      <div class="skin-grid">
+        <article class="skin-card">
+          <h3>Harith “Rebel Emberfang”</h3>
+          <div class="tags">
+            <span class="tag info">StarLight</span>
+            <span class="tag good">非官方反馈强</span>
+            <span class="tag warn">一周附近样本</span>
+          </div>
+          <p>
+            非官方评论普遍认为这套皮肤不像普通 StarLight，更接近 Epic、Collector 或 Exorcist 档位的观感。高频反馈包括“特效好”“红色燃烧感强”“终于不是机械/赛博模板”“Harith 等很久终于有新皮肤”。
+          </p>
+          <ul>
+            <li>购买意愿：多条评论表示会买、想知道上线月份、准备用 StarLight 卡。</li>
+            <li>正面点：技能特效、红色主题、入口动画、模型气质。</li>
+            <li>争议点：有人认为 Skill 1 或服装元素像 Miya StarLight、Estes Special、Exorcist、Lunar Fest 等系列。</li>
+            <li>官方区偏差：最新评论有大量 Hanzo StarLight 延期/排期不满。</li>
+          </ul>
+        </article>
+
+        <article class="skin-card">
+          <h3>其他新皮肤</h3>
+          <div class="tags">
+            <span class="tag neutral">本轮未形成稳定样本</span>
+            <span class="tag info">继续监控</span>
+          </div>
+          <p>
+            当前页面先展示本轮能验证到评论样本的皮肤。后续如果同一周窗口内出现多个 Collector、Epic、Legend、联动、活动或返场皮肤视频，页面会自动增加对应卡片，并在顶部汇总多皮肤对比。
+          </p>
+          <ul>
+            <li>会优先记录评论量充足的视频，而不是只按播放量排序。</li>
+            <li>官方和非官方视频会分开归类，避免官方频道评论被排期诉求稀释。</li>
+            <li>同一皮肤多个视频会合并成一个皮肤级结论。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>样本来源</h2>
+      <div class="table">
+        <div class="row header">
+          <div>视频/页面</div>
+          <div>类型</div>
+          <div>窗口</div>
+          <div>主要观察</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=bUDGw882-fc">June StarLight Perks | Harith “Rebel Emberfang”</a></div>
+          <div>官方</div>
+          <div>上线约 2 天</div>
+          <div>热评正面，最新评论大量 Hanzo/Vale 排期诉求。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/shorts/1RCY1-7Eyp8">Skin Starlight Harith Rasa Collector?!</a></div>
+          <div>非官方 Shorts</div>
+          <div>上线约 9 天</div>
+          <div>评论认为像 Collector/Legend，担心“夸太多会升档”。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/shorts/qwTCMGTONJU">Harith starlight efek merah membara</a></div>
+          <div>非官方 Shorts</div>
+          <div>上线约 13 天</div>
+          <div>讨论量高，夸特效，同时质疑像 Exorcist、Lunar Fest、Miya/Moskov 特效。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/shorts/LrKYglJj7yU">Harith bakalan dapet skin starlight</a></div>
+          <div>非官方 Shorts</div>
+          <div>早期爆料样本</div>
+          <div>印尼语玩家反馈偏热，关注模型、肖像、性价比和系列感。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>监控规则</h2>
       <p>
-        本页面由自动任务更新，覆盖 Collector、Epic、Legend、Special、Elite、活动皮肤、联动皮肤、返场、revamp、painted skin、annual skin、皮肤投票、爆料、实机展示和评测等所有 MLBB new skin 相关视频。
+        自动任务会监控所有 MLBB new skin 相关视频，包括 Collector、Epic、Legend、Special、Elite、活动皮肤、联动皮肤、返场、revamp、painted skin、annual skin、皮肤投票、爆料、实机展示和评测。命中条件已从“上线约 2 天”改为“上线约 1 周”，并优先分析评论量足够的官方与非官方样本。
       </p>
     </section>
   </main>
