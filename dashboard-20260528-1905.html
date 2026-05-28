@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="600">
+  <title>MLBB New Skin Feedback Dashboard</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #667085;
+      --line: #d9e1ea;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --good: #15803d;
+      --good-soft: #dcfce7;
+      --warn: #b45309;
+      --warn-soft: #fef3c7;
+      --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --info: #1d4ed8;
+      --info-soft: #dbeafe;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.25;
+      margin: 0 0 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    p {
+      line-height: 1.62;
+      margin: 0 0 12px;
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      font-size: 13px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .panel {
+      margin-bottom: 16px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subvalue {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .skin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .skin-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfdff;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 8px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.good {
+      color: var(--good);
+      background: var(--good-soft);
+    }
+
+    .tag.warn {
+      color: var(--warn);
+      background: var(--warn-soft);
+    }
+
+    .tag.bad {
+      color: var(--bad);
+      background: var(--bad-soft);
+    }
+
+    .tag.info {
+      color: var(--info);
+      background: var(--info-soft);
+    }
+
+    .tag.neutral {
+      color: var(--muted);
+      background: #eef2f7;
+    }
+
+    .bars {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 42px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #edf2f7;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .bar-fill.good {
+      background: var(--good);
+    }
+
+    .bar-fill.warn {
+      background: var(--warn);
+    }
+
+    .bar-fill.bad {
+      background: var(--bad);
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      line-height: 1.55;
+      margin-bottom: 6px;
+    }
+
+    .table {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1.4fr 0.7fr 0.7fr 1fr;
+      gap: 12px;
+      align-items: start;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      font-size: 13px;
+    }
+
+    .row.header {
+      border-top: 0;
+      color: var(--muted);
+      font-weight: 700;
+      padding-top: 0;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 860px) {
+      header {
+        padding: 16px;
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      .summary-grid,
+      .skin-grid,
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLBB New Skin Feedback Dashboard</h1>
+    <div class="meta">
+      <span>自动刷新：每 10 分钟</span>
+      <span>监控窗口：视频上线 1-7 天内</span>
+      <span>范围：所有 Mobile Legends: Bang Bang 新皮肤视频</span>
+      <span>公开页面：GitHub Pages</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary-grid" aria-label="summary">
+      <div class="card">
+        <div class="label">最近更新时间</div>
+        <div class="value">2026-05-28 19:05</div>
+        <div class="subvalue">Asia/Shanghai</div>
+      </div>
+      <div class="card">
+        <div class="label">本轮命中皮肤</div>
+        <div class="value">2</div>
+        <div class="subvalue">1-7 天窗口内命中</div>
+      </div>
+      <div class="card">
+        <div class="label">分析视频样本</div>
+        <div class="value">5</div>
+        <div class="subvalue">官方 + 非官方，按评论可见性分级</div>
+      </div>
+      <div class="card">
+        <div class="label">总体情绪</div>
+        <div class="value">偏正面</div>
+        <div class="subvalue">争议集中在排期和视觉复用</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>今日结论</h2>
+      <p>
+        已将监控目标从“上线约 2 天”调整为“上线 1-7 天内”。本轮新增纳入 Kimmy “Starbound Sentry”，它是 5 天前发布的 Collector/Exquisite Collection 官方视频。当前 Harith 的非官方评论样本更充足；Kimmy 官方视频有观看和点赞信号，但评论区未加载出可见评论，因此先作为“命中但评论样本不足”的皮肤记录，后续自动任务会继续复核。
+      </p>
+      <div class="tags">
+        <span class="tag good">皮肤质量：正面</span>
+        <span class="tag good">购买意愿：明确存在</span>
+        <span class="tag warn">主要争议：Hanzo 排期</span>
+        <span class="tag warn">次要争议：像 Exorcist/Epic/Collector</span>
+        <span class="tag info">新增：Kimmy Collector 已纳入</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>情绪分布</h2>
+      <div class="bars">
+        <div class="bar-row">
+          <span>正面</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 64%"></div></div>
+          <strong>64%</strong>
+        </div>
+        <div class="bar-row">
+          <span>中性/询问</span>
+          <div class="bar-track"><div class="bar-fill warn" style="width: 22%"></div></div>
+          <strong>22%</strong>
+        </div>
+        <div class="bar-row">
+          <span>负面/抱怨</span>
+          <div class="bar-track"><div class="bar-fill bad" style="width: 14%"></div></div>
+          <strong>14%</strong>
+        </div>
+      </div>
+      <p class="note">
+        说明：比例仅基于本轮可见评论样本的定性归类。Kimmy “Starbound Sentry” 当前未加载出可见评论，因此不参与情绪比例计算，只进入命中皮肤与来源表。
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>皮肤分析</h2>
+      <div class="skin-grid">
+        <article class="skin-card">
+          <h3>Harith “Rebel Emberfang”</h3>
+          <div class="tags">
+            <span class="tag info">StarLight</span>
+            <span class="tag good">非官方反馈强</span>
+            <span class="tag warn">一周附近样本</span>
+          </div>
+          <p>
+            非官方评论普遍认为这套皮肤不像普通 StarLight，更接近 Epic、Collector 或 Exorcist 档位的观感。高频反馈包括“特效好”“红色燃烧感强”“终于不是机械/赛博模板”“Harith 等很久终于有新皮肤”。
+          </p>
+          <ul>
+            <li>购买意愿：多条评论表示会买、想知道上线月份、准备用 StarLight 卡。</li>
+            <li>正面点：技能特效、红色主题、入口动画、模型气质。</li>
+            <li>争议点：有人认为 Skill 1 或服装元素像 Miya StarLight、Estes Special、Exorcist、Lunar Fest 等系列。</li>
+            <li>背景信号：官方早期评论曾出现大量 Hanzo StarLight 延期/排期不满，后续到一周窗口会继续复核。</li>
+          </ul>
+        </article>
+
+        <article class="skin-card">
+          <h3>其他新皮肤</h3>
+          <div class="tags">
+            <span class="tag info">Collector</span>
+            <span class="tag warn">评论样本不足</span>
+            <span class="tag good">官方曝光已记录</span>
+          </div>
+          <p>
+            Kimmy “Starbound Sentry” 已纳入 1-7 天窗口。官方视频显示约 2.6 万观看、826 赞、5 天前发布，标签包含 MLBBNewSkin 和 MLBBExquisiteCollection。当前评论区没有加载出可见评论，因此暂不推断玩家情绪，只记录为“需复核”的 Collector 新皮肤。
+          </p>
+          <ul>
+            <li>已确认：Kimmy “Starbound Sentry” 是 June Exquisite Collection 的 brand-new Collector skin。</li>
+            <li>互动信号：观看量和点赞量中等，说明官方曝光有效，但评论反馈暂时不可见。</li>
+            <li>后续策略：继续寻找 1-7 天内非官方 gameplay/review/shorts 评论，补齐玩家真实反馈。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>样本来源</h2>
+      <div class="table">
+        <div class="row header">
+          <div>视频/页面</div>
+          <div>类型</div>
+          <div>窗口</div>
+          <div>主要观察</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=cOcYPVyNG7w">June Exquisite Collection | Kimmy “Starbound Sentry”</a></div>
+          <div>官方</div>
+          <div>上线约 5 天</div>
+          <div>Collector 新皮肤已命中；约 2.6 万观看、826 赞，但评论区未加载出可见评论。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=xDDdkaeB9xo">NEW SKIN STARLIGHT 'HARITH' “Rebel Emberfang” Preview Gameplay</a></div>
+          <div>非官方展示</div>
+          <div>上线约 7 天</div>
+          <div>精确窗口候选，但可见评论不足；用于确认热度，不纳入情绪主样本。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/shorts/1RCY1-7Eyp8">Skin Starlight Harith Rasa Collector?!</a></div>
+          <div>非官方 Shorts</div>
+          <div>上线约 9 天</div>
+          <div>评论认为像 Collector/Legend，担心“夸太多会升档”。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/shorts/qwTCMGTONJU">Harith starlight efek merah membara</a></div>
+          <div>非官方 Shorts</div>
+          <div>上线约 13 天</div>
+          <div>讨论量高，夸特效，同时质疑像 Exorcist、Lunar Fest、Miya/Moskov 特效。</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/shorts/LrKYglJj7yU">Harith bakalan dapet skin starlight</a></div>
+          <div>非官方 Shorts</div>
+          <div>早期爆料样本</div>
+          <div>印尼语玩家反馈偏热，关注模型、肖像、性价比和系列感。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>监控规则</h2>
+      <p>
+        自动任务会监控所有 MLBB new skin 相关视频，包括 Collector、Epic、Legend、Special、Elite、活动皮肤、联动皮肤、返场、revamp、painted skin、annual skin、皮肤投票、爆料、实机展示和评测。命中条件已从“上线约 2 天”改为“上线 1-7 天内”，并优先分析评论量足够的官方与非官方样本；若视频命中但评论不可见，会单独标注为“评论样本不足”。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
