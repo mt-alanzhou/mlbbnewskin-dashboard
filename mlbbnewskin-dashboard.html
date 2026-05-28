@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="600">
+  <title>MLBB New Skin Feedback Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #687384;
+      --line: #dfe4ea;
+      --accent: #0f766e;
+      --warn: #b45309;
+      --good: #166534;
+      --bad: #b91c1c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 20px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin: 0 0 8px;
+    }
+
+    p {
+      line-height: 1.65;
+      margin: 0 0 12px;
+    }
+
+    .meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .panel,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .panel {
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 12px;
+      margin: 0 6px 8px 0;
+      padding: 4px 9px;
+    }
+
+    .tag.good {
+      color: var(--good);
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .tag.warn {
+      color: var(--warn);
+      border-color: #fed7aa;
+      background: #fffbeb;
+    }
+
+    .tag.bad {
+      color: var(--bad);
+      border-color: #fecaca;
+      background: #fef2f2;
+    }
+
+    .empty {
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      background: #fbfcfd;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      line-height: 1.55;
+      margin-bottom: 6px;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 760px) {
+      header {
+        padding: 16px 18px;
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLBB New Skin Feedback Dashboard</h1>
+    <div class="meta">
+      <span>自动刷新：每 10 分钟</span>
+      <span>监控范围：所有 Mobile Legends: Bang Bang 新皮肤视频</span>
+      <span>目标窗口：上线约 2 天后的评论反馈</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid" aria-label="summary">
+      <div class="card">
+        <div class="stat">最近更新时间</div>
+        <div class="value">等待首次更新</div>
+      </div>
+      <div class="card">
+        <div class="stat">命中视频</div>
+        <div class="value">0</div>
+      </div>
+      <div class="card">
+        <div class="stat">总体情绪</div>
+        <div class="value">暂无</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>今日结论</h2>
+      <div class="empty">
+        自动任务下一次运行后，会把最新的官方与非官方 YouTube 评论反馈写到这里。
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>视频分析</h2>
+      <p class="empty">暂无已分析视频。</p>
+    </section>
+
+    <section class="panel">
+      <h2>监控说明</h2>
+      <p>
+        本页面由自动任务更新，覆盖 Collector、Epic、Legend、Special、Elite、活动皮肤、联动皮肤、返场、revamp、painted skin、annual skin、皮肤投票、爆料、实机展示和评测等所有 MLBB new skin 相关视频。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
