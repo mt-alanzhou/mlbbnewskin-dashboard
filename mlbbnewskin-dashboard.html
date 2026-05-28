@@ -275,7 +275,7 @@
     <h1>MLBB New Skin Feedback Dashboard</h1>
     <div class="meta">
       <span>自动刷新：每 10 分钟</span>
-      <span>监控窗口：视频上线约 1 周后</span>
+      <span>监控窗口：视频上线 1-7 天内</span>
       <span>范围：所有 Mobile Legends: Bang Bang 新皮肤视频</span>
       <span>公开页面：GitHub Pages</span>
     </div>
@@ -285,18 +285,18 @@
     <section class="summary-grid" aria-label="summary">
       <div class="card">
         <div class="label">最近更新时间</div>
-        <div class="value">2026-05-28 18:45</div>
+        <div class="value">2026-05-28 19:05</div>
         <div class="subvalue">Asia/Shanghai</div>
       </div>
       <div class="card">
         <div class="label">本轮命中皮肤</div>
-        <div class="value">1</div>
-        <div class="subvalue">一周窗口附近有评论样本</div>
+        <div class="value">2</div>
+        <div class="subvalue">1-7 天窗口内命中</div>
       </div>
       <div class="card">
         <div class="label">分析视频样本</div>
-        <div class="value">4</div>
-        <div class="subvalue">非官方 Shorts/展示，含精确与邻近窗口</div>
+        <div class="value">5</div>
+        <div class="subvalue">官方 + 非官方，按评论可见性分级</div>
       </div>
       <div class="card">
         <div class="label">总体情绪</div>
@@ -308,13 +308,14 @@
     <section class="panel">
       <h2>今日结论</h2>
       <p>
-        已将监控目标从“上线约 2 天”调整为“上线约 1 周”。当前可验证的一周窗口附近，讨论最集中的新皮肤仍是 Harith “Rebel Emberfang”。非官方评论更关注皮肤本体质量、档位性价比和视觉相似度；官方视频暂未进入一周成熟窗口，因此本轮统计优先采用非官方一周附近样本。
+        已将监控目标从“上线约 2 天”调整为“上线 1-7 天内”。本轮新增纳入 Kimmy “Starbound Sentry”，它是 5 天前发布的 Collector/Exquisite Collection 官方视频。当前 Harith 的非官方评论样本更充足；Kimmy 官方视频有观看和点赞信号，但评论区未加载出可见评论，因此先作为“命中但评论样本不足”的皮肤记录，后续自动任务会继续复核。
       </p>
       <div class="tags">
         <span class="tag good">皮肤质量：正面</span>
         <span class="tag good">购买意愿：明确存在</span>
         <span class="tag warn">主要争议：Hanzo 排期</span>
         <span class="tag warn">次要争议：像 Exorcist/Epic/Collector</span>
+        <span class="tag info">新增：Kimmy Collector 已纳入</span>
       </div>
     </section>
 
@@ -338,7 +339,7 @@
         </div>
       </div>
       <p class="note">
-        说明：比例是基于本轮可见评论样本的定性归类，不代表完整 YouTube 评论数据库。后续自动任务会在每次运行时重算并刷新。
+        说明：比例仅基于本轮可见评论样本的定性归类。Kimmy “Starbound Sentry” 当前未加载出可见评论，因此不参与情绪比例计算，只进入命中皮肤与来源表。
       </p>
     </section>
 
@@ -366,16 +367,17 @@
         <article class="skin-card">
           <h3>其他新皮肤</h3>
           <div class="tags">
-            <span class="tag neutral">本轮未形成稳定样本</span>
-            <span class="tag info">继续监控</span>
+            <span class="tag info">Collector</span>
+            <span class="tag warn">评论样本不足</span>
+            <span class="tag good">官方曝光已记录</span>
           </div>
           <p>
-            当前页面先展示本轮能验证到评论样本的皮肤。后续如果同一周窗口内出现多个 Collector、Epic、Legend、联动、活动或返场皮肤视频，页面会自动增加对应卡片，并在顶部汇总多皮肤对比。
+            Kimmy “Starbound Sentry” 已纳入 1-7 天窗口。官方视频显示约 2.6 万观看、826 赞、5 天前发布，标签包含 MLBBNewSkin 和 MLBBExquisiteCollection。当前评论区没有加载出可见评论，因此暂不推断玩家情绪，只记录为“需复核”的 Collector 新皮肤。
           </p>
           <ul>
-            <li>会优先记录评论量充足的视频，而不是只按播放量排序。</li>
-            <li>官方和非官方视频会分开归类，避免官方频道评论被排期诉求稀释。</li>
-            <li>同一皮肤多个视频会合并成一个皮肤级结论。</li>
+            <li>已确认：Kimmy “Starbound Sentry” 是 June Exquisite Collection 的 brand-new Collector skin。</li>
+            <li>互动信号：观看量和点赞量中等，说明官方曝光有效，但评论反馈暂时不可见。</li>
+            <li>后续策略：继续寻找 1-7 天内非官方 gameplay/review/shorts 评论，补齐玩家真实反馈。</li>
           </ul>
         </article>
       </div>
@@ -389,6 +391,12 @@
           <div>类型</div>
           <div>窗口</div>
           <div>主要观察</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=cOcYPVyNG7w">June Exquisite Collection | Kimmy “Starbound Sentry”</a></div>
+          <div>官方</div>
+          <div>上线约 5 天</div>
+          <div>Collector 新皮肤已命中；约 2.6 万观看、826 赞，但评论区未加载出可见评论。</div>
         </div>
         <div class="row">
           <div><a href="https://www.youtube.com/watch?v=xDDdkaeB9xo">NEW SKIN STARLIGHT 'HARITH' “Rebel Emberfang” Preview Gameplay</a></div>
@@ -420,7 +428,7 @@
     <section class="panel">
       <h2>监控规则</h2>
       <p>
-        自动任务会监控所有 MLBB new skin 相关视频，包括 Collector、Epic、Legend、Special、Elite、活动皮肤、联动皮肤、返场、revamp、painted skin、annual skin、皮肤投票、爆料、实机展示和评测。命中条件已从“上线约 2 天”改为“上线约 1 周”，并优先分析评论量足够的官方与非官方样本。
+        自动任务会监控所有 MLBB new skin 相关视频，包括 Collector、Epic、Legend、Special、Elite、活动皮肤、联动皮肤、返场、revamp、painted skin、annual skin、皮肤投票、爆料、实机展示和评测。命中条件已从“上线约 2 天”改为“上线 1-7 天内”，并优先分析评论量足够的官方与非官方样本；若视频命中但评论不可见，会单独标注为“评论样本不足”。
       </p>
     </section>
   </main>
