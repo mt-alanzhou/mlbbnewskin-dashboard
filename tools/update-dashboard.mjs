@@ -478,23 +478,23 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
         .join("");
 
       const commentLabel = s.commentSampleSufficient
-        ? `<span class="tag good">Comments: OK</span>`
-        : `<span class="tag warn">Comments: insufficient</span>`;
+        ? `<span class="tag good">评论：已采样</span>`
+        : `<span class="tag warn">评论样本不足</span>`;
 
       const officialLabel = s.officialVideos.length
-        ? `<span class="tag neutral">Official videos: ${s.officialVideos.length}</span>`
-        : `<span class="tag neutral">Official videos: 0</span>`;
-      const nonOfficialLabel = `<span class="tag neutral">Non-official videos: ${s.nonOfficialVideos.length}</span>`;
+        ? `<span class="tag neutral">官方视频：${s.officialVideos.length}</span>`
+        : `<span class="tag neutral">官方视频：0</span>`;
+      const nonOfficialLabel = `<span class="tag neutral">非官方视频：${s.nonOfficialVideos.length}</span>`;
 
       const sourcesRows = s.videos
         .map((v) => {
-          const views = v.details.views ? `${v.details.views.toLocaleString()} views` : (v.viewsText || "—");
-          const pub = v.details.publishDate || v.details.uploadDate || v.publishedText || "—";
-          const type = isOfficialChannel(v.details.channel) ? "Official" : "Non-official";
+          const views = v.details.views ? `${v.details.views.toLocaleString()} 次观看` : (v.viewsText || "-");
+          const pub = v.details.publishDate || v.details.uploadDate || v.publishedText || "-";
+          const type = isOfficialChannel(v.details.channel) ? "官方" : "非官方";
           const cc =
             v.commentsStatus === "loaded"
-              ? `${v.comments.length} comments sampled`
-              : "comment sample insufficient";
+              ? `${v.comments.length} 条评论样本`
+              : "评论样本不足";
           return `
           <div class="row">
             <div><a href="${escapeHtml(v.watchUrl)}">${escapeHtml(v.details.title)}</a><div class="note">${escapeHtml(v.details.channel || "")}</div></div>
@@ -505,54 +505,54 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
         })
         .join("");
 
-      const praise = s.summary.praise.length ? s.summary.praise : ["No strong consensus praise signal"];
-      const complaints = s.summary.complaints.length ? s.summary.complaints : ["No strong consensus complaint signal"];
-      const buy = s.summary.purchaseIntent.length ? s.summary.purchaseIntent : ["Purchase intent unclear / mixed"];
+      const praise = s.summary.praise.length ? s.summary.praise : ["没有明显一致的好评信号"];
+      const complaints = s.summary.complaints.length ? s.summary.complaints : ["没有明显一致的吐槽信号"];
+      const buy = s.summary.purchaseIntent.length ? s.summary.purchaseIntent : ["购买意愿不明确或分歧较大"];
 
       return `
       <article class="skin-card">
         <h3>${escapeHtml(s.key)}</h3>
         <div class="meta">
           <span>${escapeHtml(s.category)}</span>
-          <span>Videos: ${s.videos.length}</span>
-          <span>Window: ${escapeHtml(windowLabel)}</span>
+          <span>视频数：${s.videos.length}</span>
+          <span>窗口：${escapeHtml(windowLabel)}</span>
         </div>
         <div class="tags">
           ${commentLabel}
           ${officialLabel}
           ${nonOfficialLabel}
-          <span class="tag neutral">Comments sampled: ${s.totalComments}</span>
+          <span class="tag neutral">评论样本：${s.totalComments}</span>
         </div>
         <div class="bars">
           <div class="bar-row">
-            <div>Positive</div>
+            <div>正面</div>
             <div class="bar-track"><div class="bar-fill good" style="width:${s.sentiment.goodPct}%"></div></div>
             <div>${s.sentiment.goodPct}%</div>
           </div>
           <div class="bar-row">
-            <div>Value/Events</div>
+            <div>价格/活动</div>
             <div class="bar-track"><div class="bar-fill warn" style="width:${s.sentiment.warnPct}%"></div></div>
             <div>${s.sentiment.warnPct}%</div>
           </div>
           <div class="bar-row">
-            <div>Negative</div>
+            <div>负面</div>
             <div class="bar-track"><div class="bar-fill bad" style="width:${s.sentiment.badPct}%"></div></div>
             <div>${s.sentiment.badPct}%</div>
           </div>
         </div>
         <div class="tags">${tags}</div>
         <ul>
-          <li><strong>Praise:</strong> ${escapeHtml(praise.join("; "))}</li>
-          <li><strong>Complaints:</strong> ${escapeHtml(complaints.join("; "))}</li>
-          <li><strong>Purchase intent:</strong> ${escapeHtml(buy.join("; "))}</li>
+          <li><strong>主要好评：</strong> ${escapeHtml(praise.join("; "))}</li>
+          <li><strong>主要吐槽：</strong> ${escapeHtml(complaints.join("; "))}</li>
+          <li><strong>购买意愿：</strong> ${escapeHtml(buy.join("; "))}</li>
         </ul>
         <p class="note">${escapeHtml(s.conclusion)}</p>
         <div class="table" style="margin-top:12px;">
           <div class="row header">
-            <div>Video</div>
-            <div>Type</div>
-            <div>Publish</div>
-            <div>Engagement</div>
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
           </div>
           ${sourcesRows}
         </div>
@@ -563,11 +563,11 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
   const closestHtml = closestCandidates.length
     ? `
     <section class="panel">
-      <h2>No exact 1–7 day hits — closest candidates</h2>
-      <p class="note">No videos matched the inclusive 1–7 day window on this run. Closest relevant candidates are listed below.</p>
+      <h2>未找到 1-7 天内精确命中，显示最近候选</h2>
+      <p class="note">本轮没有视频落入 1-7 天窗口，下方列出最接近的相关候选。</p>
       <div class="table">
         <div class="row header">
-          <div>Video</div>
+          <div>视频</div>
           <div>Channel</div>
           <div>Published</div>
           <div>Signal</div>
@@ -590,7 +590,7 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
   const warningPanel = notes.length
     ? `
     <section class="panel" style="border-color: var(--warn); background: #fff7ed;">
-      <h2>Run notes</h2>
+      <h2>运行状态</h2>
       <ul>${notes.map((n) => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
     </section>`
     : "";
@@ -668,52 +668,52 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
 </head>
 <body>
   <header>
-    <h1>MLBB New Skin Feedback Dashboard</h1>
+    <h1>MLBB 新皮肤反馈看板</h1>
     <div class="meta">
-      <span>Auto refresh: every 10 minutes</span>
-      <span>Window: videos published 1–7 days ago (inclusive)</span>
-      <span>Generated: ${escapeHtml(generatedAtHuman)}</span>
+      <span>自动刷新：每 10 分钟</span>
+      <span>监控窗口：视频上线 1-7 天内（含第 1 天和第 7 天）</span>
+      <span>生成时间： ${escapeHtml(generatedAtHuman)}</span>
     </div>
   </header>
   <main>
     ${warningPanel}
     <section class="summary-grid">
       <div class="card">
-        <div class="label">Skins (grouped)</div>
+        <div class="label">皮肤/主题分组</div>
         <div class="value">${totals.skins}</div>
-        <div class="subvalue">Grouped by inferred skin/theme</div>
+        <div class="subvalue">按皮肤或主题合并</div>
       </div>
       <div class="card">
-        <div class="label">Videos (1–7 days)</div>
+        <div class="label">1-7 天内视频</div>
         <div class="value">${totals.videos}</div>
-        <div class="subvalue">Deduped across queries</div>
+        <div class="subvalue">跨搜索词去重</div>
       </div>
       <div class="card">
-        <div class="label">Comments sampled</div>
+        <div class="label">评论样本</div>
         <div class="value">${totals.comments}</div>
-        <div class="subvalue">Using engagement-panel continuations when needed</div>
+        <div class="subvalue">必要时使用新版评论面板 continuation</div>
       </div>
       <div class="card">
-        <div class="label">Comment visibility</div>
+        <div class="label">评论可见性</div>
         <div class="value">${totals.commentOkSkins}/${totals.skins}</div>
-        <div class="subvalue">Skins with sufficient sample</div>
+        <div class="subvalue">评论样本足够的分组</div>
       </div>
     </section>
 
     ${closestHtml}
 
     <section class="panel">
-      <h2>Skin cards</h2>
+      <h2>皮肤分析卡片</h2>
       <div class="skin-grid">
-        ${skinCards || `<div class=\"skin-card\"><h3>No exact matches found</h3><p class=\"note\">No qualifying videos were detected in the inclusive 1–7 day window for this run.</p></div>`}
+        ${skinCards || `<div class=\"skin-card\"><h3>未找到精确命中</h3><p class=\"note\">本轮没有检测到上线 1-7 天内的合格视频。</p></div>`}
       </div>
     </section>
 
     <section class="panel">
-      <h2>Monitor rules</h2>
+      <h2>监控规则</h2>
       <p class="note">
-        Scope includes official and non-official MLBB new skin videos across categories: Collector/Epic/Legend/Special/Elite, event/collab/resale/return, revamps/painted/annual, surveys, leaks, showcases and reviews.
-        Comment sampling first tries initial page structures and then uses engagement-panel comment continuations via youtubei/v1/next when needed; if both fail, the skin remains a hit but is labeled “comment sample insufficient”.
+        覆盖官方与非官方 MLBB 新皮肤视频，包括 Collector、Epic、Legend、Special、Elite、活动、联动、返场、重做、painted、annual、投票、爆料、展示和评测。
+        评论采样会先读取页面初始结构，必要时再使用 youtubei/v1/next 的新版评论面板 continuation；如果两种方式都失败，仍保留该皮肤命中并标注“评论样本不足”。
       </p>
     </section>
   </main>
@@ -789,12 +789,12 @@ async function main() {
     const commentSampleSufficient = comments.length >= 12;
 
     const conclusionParts = [];
-    if (sentiment.total === 0) conclusionParts.push("No comment text sampled for this skin group.");
+    if (sentiment.total === 0) conclusionParts.push("该分组未采样到评论文本。");
     else {
-      if (sentiment.goodPct >= 35) conclusionParts.push("Overall sentiment leans positive.");
-      if (sentiment.badPct >= 25) conclusionParts.push("Notable negative reactions exist.");
-      if (sentiment.warnPct >= 25) conclusionParts.push("Value/event mechanics are a recurring concern.");
-      if (!commentSampleSufficient) conclusionParts.push("Comment sample insufficient; treat as directional only.");
+      if (sentiment.goodPct >= 35) conclusionParts.push("整体情绪偏正面。");
+      if (sentiment.badPct >= 25) conclusionParts.push("存在明显负面反馈。");
+      if (sentiment.warnPct >= 25) conclusionParts.push("价格、活动机制或抽取成本是反复出现的顾虑。");
+      if (!commentSampleSufficient) conclusionParts.push("评论样本不足，仅作方向性参考。");
     }
 
     return {
@@ -851,8 +851,8 @@ async function main() {
 </head>
 <body>
   <main>
-    <h1>MLBB New Skin Feedback Dashboard</h1>
-    <p>Redirecting… If it does not auto-open, click <a href="${escapeHtml(versionFile)}">${escapeHtml(versionFile)}</a>.</p>
+    <h1>MLBB 新皮肤反馈看板</h1>
+    <p>正在打开看板。如果没有自动跳转，请点击 <a href="${escapeHtml(versionFile)}">${escapeHtml(versionFile)}</a>.</p>
   </main>
   <script>window.location.replace(${JSON.stringify(versionFile)});</script>
 </body>
