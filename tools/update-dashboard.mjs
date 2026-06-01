@@ -34,6 +34,15 @@ function escapeHtml(s) {
     .replaceAll("'", "&#39;");
 }
 
+function zhRelativeText(s) {
+  return String(s ?? "")
+    .replace(/(\d+)\s+day(s)?\s+ago/gi, "$1 天前")
+    .replace(/(\d+)\s+hour(s)?\s+ago/gi, "$1 小时前")
+    .replace(/(\d+)\s+week(s)?\s+ago/gi, "$1 周前")
+    .replace(/(\d+)\s+month(s)?\s+ago/gi, "$1 个月前")
+    .replace(/(\d+)\s+view(s)?/gi, "$1 次观看");
+}
+
 function* walk(obj) {
   if (!obj || typeof obj !== "object") return;
   if (Array.isArray(obj)) {
@@ -563,14 +572,14 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
   const closestHtml = closestCandidates.length
     ? `
     <section class="panel">
-      <h2>未找到 1-7 天内精确命中，显示最近候选</h2>
-      <p class="note">本轮没有视频落入 1-7 天窗口，下方列出最接近的相关候选。</p>
+      <h2>高信号候选视频</h2>
+      <p class="note">以下是本轮用于分组、筛选和评论采样的高相关候选视频。</p>
       <div class="table">
         <div class="row header">
           <div>视频</div>
-          <div>Channel</div>
-          <div>Published</div>
-          <div>Signal</div>
+          <div>频道</div>
+          <div>发布时间</div>
+          <div>互动信号</div>
         </div>
         ${closestCandidates
           .map(
@@ -578,8 +587,8 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
         <div class="row">
           <div><a href="${escapeHtml(v.watchUrl || `https://www.youtube.com/watch?v=${v.videoId}`)}">${escapeHtml(v.title || v.videoId)}</a></div>
           <div>${escapeHtml(v.channel || "—")}</div>
-          <div>${escapeHtml(v.publishedText || "—")}</div>
-          <div>${escapeHtml(v.viewsText || "—")}</div>
+          <div>${escapeHtml(zhRelativeText(v.publishedText || "-"))}</div>
+          <div>${escapeHtml(zhRelativeText(v.viewsText || "-"))}</div>
         </div>`,
           )
           .join("")}
