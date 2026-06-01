@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="600">
+  <title>MLBB New Skin Feedback Dashboard</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #667085;
+      --line: #d9e1ea;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --good: #15803d;
+      --good-soft: #dcfce7;
+      --warn: #b45309;
+      --warn-soft: #fef3c7;
+      --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --info: #1d4ed8;
+      --info-soft: #dbeafe;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, "Microsoft YaHei", sans-serif; }
+    header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 18px 24px; position: sticky; top: 0; z-index: 2; }
+    main { max-width: 1220px; margin: 0 auto; padding: 22px; }
+    h1 { font-size: 22px; line-height: 1.25; margin: 0 0 8px; }
+    h2 { font-size: 18px; margin: 0 0 14px; }
+    h3 { font-size: 16px; margin: 0 0 8px; }
+    p { line-height: 1.62; margin: 0 0 12px; }
+    a { color: var(--accent); font-weight: 700; }
+    .meta { color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .card, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    .panel { margin-bottom: 16px; }
+    .label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .value { font-size: 24px; font-weight: 700; line-height: 1.2; }
+    .subvalue { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .skin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .skin-card { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: #fbfdff; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 8px; }
+    .tag { border-radius: 999px; display: inline-flex; align-items: center; min-height: 24px; padding: 4px 9px; font-size: 12px; font-weight: 700; }
+    .tag.good { color: var(--good); background: var(--good-soft); }
+    .tag.warn { color: var(--warn); background: var(--warn-soft); }
+    .tag.bad { color: var(--bad); background: var(--bad-soft); }
+    .tag.info { color: var(--info); background: var(--info-soft); }
+    .tag.neutral { color: var(--muted); background: #eef2f7; }
+    .bars { display: grid; gap: 10px; margin-top: 10px; }
+    .bar-row { display: grid; grid-template-columns: 72px 1fr 42px; gap: 10px; align-items: center; font-size: 13px; }
+    .bar-track { height: 10px; border-radius: 999px; background: #edf2f7; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; }
+    .bar-fill.good { background: var(--good); }
+    .bar-fill.warn { background: var(--warn); }
+    .bar-fill.bad { background: var(--bad); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { line-height: 1.55; margin-bottom: 6px; }
+    .table { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: 1.4fr 0.7fr 0.7fr 1fr; gap: 12px; align-items: start; border-top: 1px solid var(--line); padding-top: 10px; font-size: 13px; }
+    .row.header { border-top: 0; color: var(--muted); font-weight: 700; padding-top: 0; }
+    .note { color: var(--muted); font-size: 13px; line-height: 1.55; }
+    @media (max-width: 860px) {
+      header { padding: 16px; }
+      main { padding: 16px; }
+      .summary-grid, .skin-grid, .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLBB New Skin Feedback Dashboard</h1>
+    <div class="meta">
+      <span>Auto refresh: every 10 minutes</span>
+      <span>Window: videos published 1–7 days ago (inclusive)</span>
+      <span>Generated: 2026-05-30 18:32 (Asia/Shanghai)</span>
+    </div>
+  </header>
+  <main>
+    
+    <section class="summary-grid">
+      <div class="card">
+        <div class="label">Skins (grouped)</div>
+        <div class="value">7</div>
+        <div class="subvalue">Grouped by inferred skin/theme</div>
+      </div>
+      <div class="card">
+        <div class="label">Videos (1–7 days)</div>
+        <div class="value">19</div>
+        <div class="subvalue">Deduped across queries</div>
+      </div>
+      <div class="card">
+        <div class="label">Comments sampled</div>
+        <div class="value">275</div>
+        <div class="subvalue">Using engagement-panel continuations when needed</div>
+      </div>
+      <div class="card">
+        <div class="label">Comment visibility</div>
+        <div class="value">6/7</div>
+        <div class="subvalue">Skins with sufficient sample</div>
+      </div>
+    </section>
+
+    
+    <section class="panel">
+      <h2>No exact 1–7 day hits — closest candidates</h2>
+      <p class="note">No videos matched the inclusive 1–7 day window on this run. Closest relevant candidates are listed below.</p>
+      <div class="table">
+        <div class="row header">
+          <div>Video</div>
+          <div>Channel</div>
+          <div>Published</div>
+          <div>Signal</div>
+        </div>
+        
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=WC2PYuVOzBU">New Skins Gameplay of Chun-Li, Ryu, Ken and more...</a></div>
+          <div>Otep Gaming</div>
+          <div>1 day ago</div>
+          <div>52,189 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=VO3-iBU1m5U">6 UPCOMING SKINS GAMEPLAY | ALL STREET FIGHER SKINS | BALMOND TITAN COL &amp; BELRICK STARLIGHT SKIN</a></div>
+          <div>Kazuki Official and Kazuki Official Gaming</div>
+          <div>1 day ago</div>
+          <div>30,430 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=7cUP8-N14K4">Helcurt Collector Titans Optimized | Skin Showcase</a></div>
+          <div>Ezreall Official</div>
+          <div>1 day ago</div>
+          <div>4,619 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=RYBkvKNgsf4">3 NEW GAMEPLAY SKINS | BALMOND TITANS COLLECTOR | HERCULT COLLECTOR | BELERICK STARLIGHT</a></div>
+          <div>Pixie Game MLBB</div>
+          <div>1 day ago</div>
+          <div>9,259 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=FNXext_7sn0">NEW 4 GAMEPLAY SKINS | STREET FIGHTER X MLBB - GUILE, CHUN-LI, KEN &amp; RYU</a></div>
+          <div>Pixie Game MLBB</div>
+          <div>1 day ago</div>
+          <div>33,985 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=G1kspi189gc">GAMEPLAY 6 NEW SKIN | STREET FIGHTER | BALMOND COLLECTOR TITAN | BELERICK JULY STARLIGHT </a></div>
+          <div>One2Four Official Gaming</div>
+          <div>1 day ago</div>
+          <div>18,923 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=pG5ptfVcWcA">MLBB X STREET FIGHTER SKINS GAMEPLAY l BALMOND COLLECTOR TITAN l HELCURT COL REVAMP l BELERICK STAR</a></div>
+          <div>GOD OF MLBB</div>
+          <div>1 day ago</div>
+          <div>43,555 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=zKNKlfBPVVE">NEW MLBB SKIN INJECTOR 2026 🔥 UNLOCK ALL SKINS | NO SHIZUKU NEEDED</a></div>
+          <div>Crixsytope</div>
+          <div>1 day ago</div>
+          <div>14,154 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=wUOcfEbD3XE">GUINEVERE CHUN LI NEW SKIN GAMEPLAY MONTAGE - Raymarcc</a></div>
+          <div>Raymarcc</div>
+          <div>1 day ago</div>
+          <div>2,166 views</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=8BZDj7LUvFI">JUNE- DECEMBER ALL SKINS &amp; EVENTS| COLLECTOR SKINS| COLLAB SKINS WITH RELEASE DATES &amp; LEGEND SKINS</a></div>
+          <div>KiomeeML</div>
+          <div>2 days ago</div>
+          <div>47,846 views</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Skin cards</h2>
+      <div class="skin-grid">
+        
+      <article class="skin-card">
+        <h3>General MLBB new skins</h3>
+        <div class="meta">
+          <span>Unspecified / mixed</span>
+          <span>Videos: 8</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag good">Comments: OK</span>
+          <span class="tag neutral">Official videos: 2</span>
+          <span class="tag neutral">Non-official videos: 6</span>
+          <span class="tag neutral">Comments sampled: 110</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:25%"></div></div>
+            <div>25%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:13%"></div></div>
+            <div>13%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:5%"></div></div>
+            <div>5%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Effects/animation</span><span class="tag info">Release/date</span><span class="tag info">Revamp/old skin</span><span class="tag info">Model/design</span><span class="tag info">Value/price</span><span class="tag info">Gacha/event</span></div>
+        <ul>
+          <li><strong>Praise:</strong> High-quality effects/animations; Unique collab feel / not copy-paste; Model looks clean</li>
+          <li><strong>Complaints:</strong> Value/price concerns; Gacha/event fairness worries; Copy/paste or reuse allegations</li>
+          <li><strong>Purchase intent:</strong> Strong buy intent; Skip / wait sentiment</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=WC2PYuVOzBU">New Skins Gameplay of Chun-Li, Ryu, Ken and more...</a><div class="note">Otep Gaming</div></div>
+            <div>Non-official</div>
+            <div>2026-05-28T16:30:18-07:00</div>
+            <div>52,189 views · 10 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=MLB5dZ8pN-o">42 UPCOMING SKIN &amp; EVENT - RAFAELA SUMMER, HELCURT CC, ASPIRANTS UNITE, EXORCIST 3.0, MLBB X SF6</a><div class="note">Joni Moba</div></div>
+            <div>Non-official</div>
+            <div>2026-05-27T19:01:21-07:00</div>
+            <div>16,553 views · 13 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=bPXlSwThqLI">NEW HERO 136 SUPPORT UPDATE, GUSION NEW SKIN, REVAMP ZHASK, REVAMP LUNOX LEGEND -MLBB UPCOMING SKIN</a><div class="note">Joni Moba</div></div>
+            <div>Non-official</div>
+            <div>2026-05-25T18:20:44-07:00</div>
+            <div>24,415 views · 26 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=wUOcfEbD3XE">GUINEVERE CHUN LI NEW SKIN GAMEPLAY MONTAGE - Raymarcc</a><div class="note">Raymarcc</div></div>
+            <div>Non-official</div>
+            <div>2026-05-29T01:00:11-07:00</div>
+            <div>2,166 views · 6 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=lyEkGOmG-z4">I PLAY 9 COLLECTOR SKIN AND RATE THEM (female ver</a><div class="note">Caky ML</div></div>
+            <div>Non-official</div>
+            <div>2026-05-27T05:12:56-07:00</div>
+            <div>6,994 views · 26 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=bUDGw882-fc">June StarLight Perks | Harith &quot;Rebel Emberfang&quot; | Mobile Legends: Bang Bang</a><div class="note">Mobile Legends: Bang Bang</div></div>
+            <div>Official</div>
+            <div>2026-05-25T21:00:01-07:00</div>
+            <div>42,501 views · 23 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=xuuEY4prFRs">June StarLight Perks | Harith &quot;Rebel Emberfang&quot; | Mobile Legends: Bang Bang</a><div class="note">MLBB Philippines Official</div></div>
+            <div>Non-official</div>
+            <div>2026-05-25T21:00:01-07:00</div>
+            <div>1,069 views · 4 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=27uDhTMaQyM">June StarLight Perks | Harith &quot;Rebel Emberfang&quot; | Mobile Legends: Bang Bang</a><div class="note">Mobile Legends: Bang Bang North America</div></div>
+            <div>Official</div>
+            <div>2026-05-25T21:00:02-07:00</div>
+            <div>440 views · 2 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>MLBB x Street Fighter</h3>
+        <div class="meta">
+          <span>Collaboration skins</span>
+          <span>Videos: 4</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag good">Comments: OK</span>
+          <span class="tag neutral">Official videos: 0</span>
+          <span class="tag neutral">Non-official videos: 4</span>
+          <span class="tag neutral">Comments sampled: 35</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:9%"></div></div>
+            <div>9%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:26%"></div></div>
+            <div>26%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Gacha/event</span><span class="tag info">Effects/animation</span><span class="tag info">Release/date</span><span class="tag info">Model/design</span><span class="tag info">Voice/SFX</span><span class="tag info">Value/price</span></div>
+        <ul>
+          <li><strong>Praise:</strong> High-quality effects/animations; Model looks clean</li>
+          <li><strong>Complaints:</strong> Gacha/event fairness worries</li>
+          <li><strong>Purchase intent:</strong> Skip / wait sentiment</li>
+        </ul>
+        <p class="note">Value/event mechanics are a recurring concern.</p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=FNXext_7sn0">NEW 4 GAMEPLAY SKINS | STREET FIGHTER X MLBB - GUILE, CHUN-LI, KEN &amp; RYU</a><div class="note">Pixie Game MLBB</div></div>
+            <div>Non-official</div>
+            <div>2026-05-28T09:11:18-07:00</div>
+            <div>33,985 views · 2 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=G1kspi189gc">GAMEPLAY 6 NEW SKIN | STREET FIGHTER | BALMOND COLLECTOR TITAN | BELERICK JULY STARLIGHT</a><div class="note">One2Four Official Gaming</div></div>
+            <div>Non-official</div>
+            <div>2026-05-28T08:55:26-07:00</div>
+            <div>18,923 views · 2 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=pG5ptfVcWcA">MLBB X STREET FIGHTER SKINS GAMEPLAY l BALMOND COLLECTOR TITAN l HELCURT COL REVAMP l BELERICK STAR</a><div class="note">GOD OF MLBB</div></div>
+            <div>Non-official</div>
+            <div>2026-05-28T07:48:51-07:00</div>
+            <div>43,555 views · 5 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=bgX3HVcIXGE">19 UPCOMING EVENT &amp; SKINS | STREET FIGHTER | ASPIRANTS UNITE | SANRIO RESALE | MEGA SALE &amp; MANY MORE</a><div class="note">Kazuki Official</div></div>
+            <div>Non-official</div>
+            <div>2026-05-27T04:27:26-07:00</div>
+            <div>27,481 views · 26 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Roadmap / multiple skins</h3>
+        <div class="meta">
+          <span>Multi-skin roundup</span>
+          <span>Videos: 3</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag good">Comments: OK</span>
+          <span class="tag neutral">Official videos: 0</span>
+          <span class="tag neutral">Non-official videos: 3</span>
+          <span class="tag neutral">Comments sampled: 51</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:12%"></div></div>
+            <div>12%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:4%"></div></div>
+            <div>4%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Effects/animation</span><span class="tag info">Release/date</span><span class="tag info">Gacha/event</span><span class="tag info">Revamp/old skin</span><span class="tag info">Value/price</span><span class="tag info">Comparisons</span></div>
+        <ul>
+          <li><strong>Praise:</strong> High-quality effects/animations</li>
+          <li><strong>Complaints:</strong> Gacha/event fairness worries</li>
+          <li><strong>Purchase intent:</strong> Skip / wait sentiment</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=VO3-iBU1m5U">6 UPCOMING SKINS GAMEPLAY | ALL STREET FIGHER SKINS | BALMOND TITAN COL &amp; BELRICK STARLIGHT SKIN</a><div class="note">Kazuki Official</div></div>
+            <div>Non-official</div>
+            <div>2026-05-29T02:05:04-07:00</div>
+            <div>30,430 views · 30 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=8BZDj7LUvFI">JUNE- DECEMBER ALL SKINS &amp; EVENTS| COLLECTOR SKINS| COLLAB SKINS WITH RELEASE DATES &amp; LEGEND SKINS</a><div class="note">KiomeeML</div></div>
+            <div>Non-official</div>
+            <div>2026-05-27T21:35:44-07:00</div>
+            <div>47,846 views · 8 comments sampled</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=zKNKlfBPVVE">NEW MLBB SKIN INJECTOR 2026 🔥 UNLOCK ALL SKINS | NO SHIZUKU NEEDED</a><div class="note">Crixsytope</div></div>
+            <div>Non-official</div>
+            <div>2026-05-28T03:56:50-07:00</div>
+            <div>14,154 views · 13 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Kagura — Legend / Magic Wheel</h3>
+        <div class="meta">
+          <span>Legend</span>
+          <span>Videos: 1</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag good">Comments: OK</span>
+          <span class="tag neutral">Official videos: 0</span>
+          <span class="tag neutral">Non-official videos: 1</span>
+          <span class="tag neutral">Comments sampled: 30</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:13%"></div></div>
+            <div>13%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:20%"></div></div>
+            <div>20%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:10%"></div></div>
+            <div>10%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Value/price</span><span class="tag info">Gacha/event</span><span class="tag info">Revamp/old skin</span><span class="tag info">Comparisons</span><span class="tag info">Release/date</span></div>
+        <ul>
+          <li><strong>Praise:</strong> No strong consensus praise signal</li>
+          <li><strong>Complaints:</strong> Value/price concerns; Gacha/event fairness worries; Copy/paste or reuse allegations</li>
+          <li><strong>Purchase intent:</strong> Purchase intent unclear / mixed</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=vWiihLwjfrM">RECENT UPDATES: KAGURA MAGIC WHEEL? ARGUS COLLECTOR TITANS| NEW MOBA SQUADS| 2026 ANNUAL STARLIGHT</a><div class="note">KiomeeML</div></div>
+            <div>Non-official</div>
+            <div>2026-05-26T03:33:37-07:00</div>
+            <div>19,561 views · 30 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Xavier — Legend</h3>
+        <div class="meta">
+          <span>Legend</span>
+          <span>Videos: 1</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag good">Comments: OK</span>
+          <span class="tag neutral">Official videos: 0</span>
+          <span class="tag neutral">Non-official videos: 1</span>
+          <span class="tag neutral">Comments sampled: 30</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:20%"></div></div>
+            <div>20%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:27%"></div></div>
+            <div>27%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:7%"></div></div>
+            <div>7%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Release/date</span><span class="tag info">Gacha/event</span><span class="tag info">Revamp/old skin</span><span class="tag info">Effects/animation</span><span class="tag info">Model/design</span><span class="tag info">Voice/SFX</span></div>
+        <ul>
+          <li><strong>Praise:</strong> High-quality effects/animations; Unique collab feel / not copy-paste; Model looks clean</li>
+          <li><strong>Complaints:</strong> Value/price concerns; Gacha/event fairness worries</li>
+          <li><strong>Purchase intent:</strong> Skip / wait sentiment</li>
+        </ul>
+        <p class="note">Value/event mechanics are a recurring concern.</p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=7XKWZWfYtc4">Xavier Legend | Exorcist 1,2 &amp; 3 Update | Bleach Updates | Kagura Legend | Antigod Skin Series</a><div class="note">Enovia YT</div></div>
+            <div>Non-official</div>
+            <div>2026-05-27T02:16:36-07:00</div>
+            <div>19,713 views · 30 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Helcurt — Collector (revamp)</h3>
+        <div class="meta">
+          <span>Collector / revamp</span>
+          <span>Videos: 1</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag good">Comments: OK</span>
+          <span class="tag neutral">Official videos: 0</span>
+          <span class="tag neutral">Non-official videos: 1</span>
+          <span class="tag neutral">Comments sampled: 17</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:24%"></div></div>
+            <div>24%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:6%"></div></div>
+            <div>6%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:12%"></div></div>
+            <div>12%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Effects/animation</span><span class="tag info">Value/price</span><span class="tag info">Gacha/event</span><span class="tag info">Release/date</span></div>
+        <ul>
+          <li><strong>Praise:</strong> No strong consensus praise signal</li>
+          <li><strong>Complaints:</strong> Value/price concerns</li>
+          <li><strong>Purchase intent:</strong> Skip / wait sentiment</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=7cUP8-N14K4">Helcurt Collector Titans Optimized | Skin Showcase</a><div class="note">Ezreall Official</div></div>
+            <div>Non-official</div>
+            <div>2026-05-29T02:29:28-07:00</div>
+            <div>4,619 views · 17 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Balmond — Titan (Collector)</h3>
+        <div class="meta">
+          <span>Collector</span>
+          <span>Videos: 1</span>
+          <span>Window: 1–7 days ago (inclusive)</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">Comments: insufficient</span>
+          <span class="tag neutral">Official videos: 0</span>
+          <span class="tag neutral">Non-official videos: 1</span>
+          <span class="tag neutral">Comments sampled: 2</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>Positive</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+          <div class="bar-row">
+            <div>Value/Events</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+          <div class="bar-row">
+            <div>Negative</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">Release/date</span></div>
+        <ul>
+          <li><strong>Praise:</strong> No strong consensus praise signal</li>
+          <li><strong>Complaints:</strong> No strong consensus complaint signal</li>
+          <li><strong>Purchase intent:</strong> Purchase intent unclear / mixed</li>
+        </ul>
+        <p class="note">Comment sample insufficient; treat as directional only.</p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>Video</div>
+            <div>Type</div>
+            <div>Publish</div>
+            <div>Engagement</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=RYBkvKNgsf4">3 NEW GAMEPLAY SKINS | BALMOND TITANS COLLECTOR | HERCULT COLLECTOR | BELERICK STARLIGHT</a><div class="note">Pixie Game MLBB</div></div>
+            <div>Non-official</div>
+            <div>2026-05-28T08:32:38-07:00</div>
+            <div>9,259 views · 2 comments sampled</div>
+          </div>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Monitor rules</h2>
+      <p class="note">
+        Scope includes official and non-official MLBB new skin videos across categories: Collector/Epic/Legend/Special/Elite, event/collab/resale/return, revamps/painted/annual, surveys, leaks, showcases and reviews.
+        Comment sampling first tries initial page structures and then uses engagement-panel comment continuations via youtubei/v1/next when needed; if both fail, the skin remains a hit but is labeled “comment sample insufficient”.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
