@@ -3,6 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const RUN_LOG_PATH = path.join(ROOT_DIR, "run-log.md");
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function formatShanghaiStamp(date = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -32,6 +37,20 @@ function escapeHtml(s) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function appendRunLog(stamp, result, lines = []) {
+  const header = fs.existsSync(RUN_LOG_PATH)
+    ? fs.readFileSync(RUN_LOG_PATH, "utf8").trimEnd()
+    : "# MLBBNewSkin 看板运行日志\n";
+  const body = [
+    `### ${stamp.human}`,
+    "",
+    `- 结果：${result}`,
+    ...lines.map((line) => `- ${line}`),
+    "",
+  ].join("\n");
+  fs.writeFileSync(RUN_LOG_PATH, `${header}\n\n${body}`, "utf8");
 }
 
 function zhRelativeText(s) {
@@ -101,31 +120,41 @@ function parseRelativeDays(text) {
   return null;
 }
 
+async function youtubeFetch(url, opts = {}) {
+  const { headers = {}, signal, ...rest } = opts;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(url, {
+        ...rest,
+        signal: signal ?? AbortSignal.timeout(25000),
+        headers: {
+          "accept-language": "en-US,en;q=0.9",
+          "user-agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+          cookie: "CONSENT=YES+",
+          ...headers,
+        },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      return res;
+    } catch (e) {
+      lastError = e;
+      if (attempt < 3) await sleep(1200 * attempt);
+    }
+  }
+
+  throw new Error(`YouTube 请求失败，已重试 3 次：${String(lastError?.message || lastError)}`);
+}
+
 async function fetchText(url, opts = {}) {
-  const res = await fetch(url, {
-    ...opts,
-    headers: {
-      "accept-language": "en-US,en;q=0.9",
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-      cookie: "CONSENT=YES+",
-      ...(opts.headers || {}),
-    },
-  });
+  const res = await youtubeFetch(url, opts);
   return await res.text();
 }
 
 async function fetchJson(url, opts = {}) {
-  const res = await fetch(url, {
-    ...opts,
-    headers: {
-      "accept-language": "en-US,en;q=0.9",
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-      cookie: "CONSENT=YES+",
-      ...(opts.headers || {}),
-    },
-  });
+  const res = await youtubeFetch(url, opts);
   return await res.json();
 }
 
@@ -237,17 +266,17 @@ function inferSkinGroups(title) {
   }
 
   if (t.includes("STREET FIGHTER")) {
-    groups.push({ key: "MLBB x Street Fighter", category: "Collaboration skins" });
+    groups.push({ key: "MLBB x Street Fighter", category: "联动皮肤" });
   }
   if (t.includes("JUJUTSU") || t.includes("JUJUTSU KAISEN")) {
-    groups.push({ key: "MLBB x Jujutsu Kaisen", category: "Collaboration skins" });
+    groups.push({ key: "MLBB x Jujutsu Kaisen", category: "联动皮肤" });
   }
 
   if (t.includes("UPCOMING SKINS") || t.includes("ALL SKINS") || t.includes("RELEASE DATES") || t.includes("EVENTS")) {
-    groups.push({ key: "Roadmap / multiple skins", category: "Multi-skin roundup" });
+    groups.push({ key: "Roadmap / multiple skins", category: "多皮肤汇总" });
   }
 
-  if (groups.length === 0) groups.push({ key: "General MLBB new skins", category: "Unspecified / mixed" });
+  if (groups.length === 0) groups.push({ key: "General MLBB new skins", category: "未细分/混合" });
   return groups;
 }
 
@@ -321,14 +350,14 @@ function scoreSentiment(comments) {
 
 function extractTopicTags(comments) {
   const topics = [
-    ["Effects/animation", ["effect", "effects", "animation", "anim", "skill", "ult", "recall", "entrance"]],
-    ["Model/design", ["model", "design", "outfit", "face", "hair", "texture"]],
-    ["Voice/SFX", ["voice", "sound", "sfx", "music"]],
-    ["Value/price", ["price", "expensive", "worth", "diamond", "coa", "money", "cheap"]],
-    ["Gacha/event", ["gacha", "draw", "event", "token", "rigged", "luck"]],
-    ["Revamp/old skin", ["revamp", "rework", "old", "previous"]],
-    ["Comparisons", ["better than", "worse", "compare", "similar", "copy", "copy paste"]],
-    ["Release/date", ["release", "date", "when", "june", "july", "august", "september", "october", "november", "december"]],
+    ["特效/动画", ["effect", "effects", "animation", "anim", "skill", "ult", "recall", "entrance"]],
+    ["模型/设计", ["model", "design", "outfit", "face", "hair", "texture"]],
+    ["语音/音效", ["voice", "sound", "sfx", "music"]],
+    ["价格/性价比", ["price", "expensive", "worth", "diamond", "coa", "money", "cheap"]],
+    ["抽奖/活动机制", ["gacha", "draw", "event", "token", "rigged", "luck"]],
+    ["重做/旧皮肤对比", ["revamp", "rework", "old", "previous"]],
+    ["同类皮肤比较", ["better than", "worse", "compare", "similar", "copy", "copy paste"]],
+    ["上线时间", ["release", "date", "when", "june", "july", "august", "september", "october", "november", "december"]],
   ];
 
   const counts = new Map();
@@ -353,20 +382,20 @@ function summarizeFeedback(comments) {
   const picks = (pairs) => pairs.filter(([_, keys]) => keys.some((k) => text.includes(k))).map(([label]) => label);
 
   const praise = picks([
-    ["High-quality effects/animations", ["animation", "effects", "insane", "awesome", "amazing"]],
-    ["Unique collab feel / not copy-paste", ["not just copy", "copy paste", "unique", "own animation"]],
-    ["Model looks clean", ["model", "design", "outfit", "beautiful"]],
+    ["特效和动画质量被认可", ["animation", "effects", "insane", "awesome", "amazing"]],
+    ["联动呈现有独特感，不像简单复用", ["not just copy", "copy paste", "unique", "own animation"]],
+    ["建模和外观较干净", ["model", "design", "outfit", "beautiful"]],
   ]).slice(0, 3);
 
   const complaints = picks([
-    ["Value/price concerns", ["expensive", "overpriced", "not worth", "price", "money"]],
-    ["Gacha/event fairness worries", ["gacha", "rigged", "luck", "draw", "scam"]],
-    ["Copy/paste or reuse allegations", ["copy paste", "copy", "similar"]],
+    ["价格或性价比顾虑", ["expensive", "overpriced", "not worth", "price", "money"]],
+    ["抽奖/活动公平性担忧", ["gacha", "rigged", "luck", "draw", "scam"]],
+    ["被质疑复用或相似度过高", ["copy paste", "copy", "similar"]],
   ]).slice(0, 3);
 
   const purchaseIntent = picks([
-    ["Strong buy intent", ["instant buy", "instabuy", "will buy", "gonna buy", "buy it"]],
-    ["Skip / wait sentiment", ["skip", "not buying", "wait", "save"]],
+    ["购买意愿较强", ["instant buy", "instabuy", "will buy", "gonna buy", "buy it"]],
+    ["倾向跳过或继续观望", ["skip", "not buying", "wait", "save"]],
   ]).slice(0, 2);
 
   return { praise, complaints, purchaseIntent };
@@ -610,7 +639,7 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="refresh" content="600">
-  <title>MLBB New Skin Feedback Dashboard</title>
+  <title>MLBB 新皮肤反馈看板</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -730,6 +759,103 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
 </html>`;
 }
 
+function buildIndexHtml(versionFile) {
+  return `<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <meta http-equiv="refresh" content="0; url=${escapeHtml(versionFile)}">
+  <title>MLBB 新皮肤反馈看板</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f7f9; color: #17202a; font-family: Arial, "Microsoft YaHei", sans-serif; }
+    main { max-width: 620px; padding: 28px; text-align: center; }
+    a { color: #0f766e; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>MLBB 新皮肤反馈看板</h1>
+    <p>正在打开看板。如果没有自动跳转，请点击 <a href="${escapeHtml(versionFile)}">${escapeHtml(versionFile)}</a>。</p>
+  </main>
+  <script>window.location.replace(${JSON.stringify(versionFile)});</script>
+</body>
+</html>
+`;
+}
+
+function writeIndex(versionFile) {
+  fs.writeFileSync(path.join(ROOT_DIR, "index.html"), buildIndexHtml(versionFile), "utf8");
+}
+
+function buildFailureSnapshotHtml(stamp, error) {
+  const previousPath = path.join(ROOT_DIR, "mlbbnewskin-dashboard.html");
+  const reason = escapeHtml(String(error?.message || error));
+  const statusPanel = `<!-- latest-run-status:start -->
+    <section class="panel" style="border-color: var(--warn); background: #fff7ed;">
+      <h2>运行状态</h2>
+      <p class="note">本次自动刷新未能完成，时间：${escapeHtml(stamp.human)}。失败原因：${reason}。已保留上一版成功分析，等待下一次自动刷新或手动补跑。</p>
+    </section>
+    <!-- latest-run-status:end -->`;
+
+  if (!fs.existsSync(previousPath)) {
+    return `<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="600">
+  <title>MLBB 新皮肤反馈看板</title>
+  <style>
+    body { margin: 0; background: #f5f7fb; color: #17202a; font-family: Arial, "Microsoft YaHei", sans-serif; }
+    main { max-width: 900px; margin: 0 auto; padding: 22px; }
+    .panel { background: #fff7ed; border: 1px solid #b45309; border-radius: 8px; padding: 16px; }
+    .note { color: #667085; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <main>
+    ${statusPanel}
+  </main>
+</body>
+</html>`;
+  }
+
+  const previous = fs.readFileSync(previousPath, "utf8");
+  const cleaned = previous.replace(/<!-- latest-run-status:start -->[\s\S]*?<!-- latest-run-status:end -->\s*/g, "");
+  return cleaned.includes("<main>") ? cleaned.replace("<main>", `<main>\n    ${statusPanel}`) : cleaned;
+}
+
+function writeFailureSnapshot(error) {
+  const stamp = formatShanghaiStamp(new Date());
+  const versionFile = `dashboard-${stamp.ymd}-${stamp.hm}.html`;
+  const html = buildFailureSnapshotHtml(stamp, error);
+
+  fs.writeFileSync(path.join(ROOT_DIR, "mlbbnewskin-dashboard.html"), html, "utf8");
+  fs.writeFileSync(path.join(ROOT_DIR, versionFile), html, "utf8");
+  writeIndex(versionFile);
+  appendRunLog(stamp, "失败", [
+    `失败原因：${String(error?.message || error)}`,
+    "已保留上一版成功分析，并在网页中加入中文运行状态提示。",
+  ]);
+
+  console.log(
+    JSON.stringify(
+      {
+        "生成时间": stamp.human,
+        "版本文件": versionFile,
+        "结果": "失败，已保留上一版分析",
+        "失败原因": String(error?.message || error),
+      },
+      null,
+      2,
+    ),
+  );
+}
+
 async function main() {
   const stamp = formatShanghaiStamp(new Date());
   const versionFile = `dashboard-${stamp.ymd}-${stamp.hm}.html`;
@@ -828,7 +954,7 @@ async function main() {
     commentOkSkins: skins.filter((s) => s.commentSampleSufficient).length,
   };
 
-  const windowLabel = "1–7 days ago (inclusive)";
+  const windowLabel = "上线 1-7 天内（包含第 1 天和第 7 天）";
   const html = buildDashboardHtml({
     generatedAtHuman: stamp.human,
     windowLabel,
@@ -841,45 +967,26 @@ async function main() {
   fs.mkdirSync(path.join(ROOT_DIR, "tools"), { recursive: true });
   fs.writeFileSync(path.join(ROOT_DIR, "mlbbnewskin-dashboard.html"), html, "utf8");
   fs.writeFileSync(path.join(ROOT_DIR, versionFile), html, "utf8");
-
-  const indexHtml = `<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="pragma" content="no-cache">
-  <meta http-equiv="expires" content="0">
-  <meta http-equiv="refresh" content="0; url=${escapeHtml(versionFile)}">
-  <title>MLBB New Skin Feedback Dashboard</title>
-  <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f7f9; color: #17202a; font-family: Arial, "Microsoft YaHei", sans-serif; }
-    main { max-width: 620px; padding: 28px; text-align: center; }
-    a { color: #0f766e; font-weight: 700; }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>MLBB 新皮肤反馈看板</h1>
-    <p>正在打开看板。如果没有自动跳转，请点击 <a href="${escapeHtml(versionFile)}">${escapeHtml(versionFile)}</a>.</p>
-  </main>
-  <script>window.location.replace(${JSON.stringify(versionFile)});</script>
-</body>
-</html>
-`;
-
-  fs.writeFileSync(path.join(ROOT_DIR, "index.html"), indexHtml, "utf8");
+  writeIndex(versionFile);
+  appendRunLog(stamp, "成功", [
+    `命中 1-7 天内视频：${enriched.length}`,
+    `皮肤/主题分组：${totals.skins}`,
+    `评论样本：${totals.comments}`,
+    `评论样本充足分组：${totals.commentOkSkins}/${totals.skins}`,
+    `版本文件：${versionFile}`,
+    ...(notes.length ? notes.map((n) => `运行提示：${n}`) : []),
+  ]);
 
   console.log(
     JSON.stringify(
       {
-        generatedAt: stamp.human,
-        versionFile,
-        videosInWindow: enriched.length,
-        skins: totals.skins,
-        commentsSampled: totals.comments,
-        commentOkSkins: totals.commentOkSkins,
-        notes,
+        "生成时间": stamp.human,
+        "版本文件": versionFile,
+        "1-7 天内视频": enriched.length,
+        "皮肤/主题分组": totals.skins,
+        "评论样本": totals.comments,
+        "评论样本充足分组": `${totals.commentOkSkins}/${totals.skins}`,
+        "运行提示": notes,
       },
       null,
       2,
@@ -889,5 +996,6 @@ async function main() {
 
 main().catch((e) => {
   console.error(e);
-  process.exit(1);
+  writeFailureSnapshot(e);
+  process.exitCode = 0;
 });
