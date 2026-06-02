@@ -4,6 +4,9 @@ import { fileURLToPath } from "node:url";
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const RUN_LOG_PATH = path.join(ROOT_DIR, "run-log.md");
+const MAX_COMMENTS_PER_VIDEO = Number(process.env.MLBB_MAX_COMMENTS_PER_VIDEO || 5000);
+const MAX_COMMENT_PAGES_PER_VIDEO = Number(process.env.MLBB_MAX_COMMENT_PAGES_PER_VIDEO || 250);
+const COMMENT_PAGE_DELAY_MS = Number(process.env.MLBB_COMMENT_PAGE_DELAY_MS || 350);
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -37,6 +40,22 @@ function escapeHtml(s) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function formatInt(n) {
+  return Number.isFinite(n) ? n.toLocaleString("en-US") : "-";
+}
+
+function commentCoverageText(analyzed, displayed) {
+  if (Number.isFinite(displayed) && displayed > 0) {
+    return `${formatInt(analyzed)}/${formatInt(displayed)} 条评论已分析`;
+  }
+  if (analyzed > 0) return `${formatInt(analyzed)} 条评论已分析`;
+  return "评论文本未取得";
+}
+
+function isCommentAnalysisLoaded(status) {
+  return status === "complete" || status === "partial" || status === "partial_limit";
 }
 
 function appendRunLog(stamp, result, lines = []) {
@@ -217,6 +236,14 @@ function collectCommentEntitiesFromMutations(mutations) {
     });
   }
   return comments;
+}
+
+function commentKey(comment) {
+  return [
+    String(comment.author ?? "").trim(),
+    String(comment.published ?? "").trim(),
+    String(comment.text ?? "").trim(),
+  ].join("\u0001");
 }
 
 function guessCommentCount(initialData) {
@@ -467,13 +494,23 @@ async function fetchVideoDetailsAndComments(video) {
 
   let comments = [];
   let commentsStatus = "unavailable";
+  let commentFetchPages = 0;
+  const displayedCommentCount = details.commentCount;
+  const targetCommentCount =
+    Number.isFinite(displayedCommentCount) && displayedCommentCount > 0
+      ? Math.min(displayedCommentCount, MAX_COMMENTS_PER_VIDEO)
+      : MAX_COMMENTS_PER_VIDEO;
 
   if (commentToken && tube.apiKey && tube.context) {
     commentsStatus = "loading";
     let continuation = commentToken;
     let pages = 0;
+    const seenContinuations = new Set();
+    const seenComments = new Set();
 
-    while (continuation && comments.length < 80 && pages < 4) {
+    while (continuation && comments.length < targetCommentCount && pages < MAX_COMMENT_PAGES_PER_VIDEO) {
+      if (seenContinuations.has(continuation)) break;
+      seenContinuations.add(continuation);
       pages++;
       const nextJson = await fetchJson(`https://www.youtube.com/youtubei/v1/next?key=${tube.apiKey}`, {
         method: "POST",
@@ -489,13 +526,24 @@ async function fetchVideoDetailsAndComments(video) {
       const newComments = collectCommentEntitiesFromMutations(
         nextJson?.frameworkUpdates?.entityBatchUpdate?.mutations || [],
       );
-      comments.push(...newComments);
+      for (const comment of newComments) {
+        const key = commentKey(comment);
+        if (seenComments.has(key)) continue;
+        seenComments.add(key);
+        comments.push(comment);
+      }
 
       const nextToken = findAnyContinuationToken(nextJson);
       continuation = nextToken && nextToken !== continuation ? nextToken : null;
+      if (continuation && comments.length < targetCommentCount) await sleep(COMMENT_PAGE_DELAY_MS);
     }
 
-    if (comments.length > 0) commentsStatus = "loaded";
+    commentFetchPages = pages;
+    const reachedTarget = comments.length >= targetCommentCount;
+    const exhaustedContinuation = !continuation;
+    if (comments.length > 0 && (reachedTarget || exhaustedContinuation)) commentsStatus = "complete";
+    else if (comments.length > 0 && pages >= MAX_COMMENT_PAGES_PER_VIDEO) commentsStatus = "partial_limit";
+    else if (comments.length > 0) commentsStatus = "partial";
     else commentsStatus = "empty_after_continuations";
   }
 
@@ -504,7 +552,9 @@ async function fetchVideoDetailsAndComments(video) {
     watchUrl,
     details,
     commentsStatus,
-    comments: comments.slice(0, 80),
+    commentFetchPages,
+    commentFetchTarget: targetCommentCount,
+    comments,
   };
 }
 
@@ -515,9 +565,11 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
         .map((t) => `<span class="tag info">${escapeHtml(t)}</span>`)
         .join("");
 
-      const commentLabel = s.commentSampleSufficient
-        ? `<span class="tag good">评论：已采样</span>`
-        : `<span class="tag warn">评论样本不足</span>`;
+      const commentLabel = s.totalComments > 0
+        ? s.commentFullyLoaded
+          ? `<span class="tag good">评论：已尽量全量分析</span>`
+          : `<span class="tag warn">评论：部分分析</span>`
+        : `<span class="tag warn">评论文本未取得</span>`;
 
       const officialLabel = s.officialVideos.length
         ? `<span class="tag neutral">官方视频：${s.officialVideos.length}</span>`
@@ -529,10 +581,12 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
           const views = v.details.views ? `${v.details.views.toLocaleString()} 次观看` : (v.viewsText || "-");
           const pub = v.details.publishDate || v.details.uploadDate || v.publishedText || "-";
           const type = isOfficialChannel(v.details.channel) ? "官方" : "非官方";
-          const cc =
-            v.commentsStatus === "loaded"
-              ? `${v.comments.length} 条评论样本`
-              : "评论样本不足";
+          const displayedComments = Number.isFinite(v.details.commentCount) ? v.details.commentCount : null;
+          const cc = isCommentAnalysisLoaded(v.commentsStatus)
+            ? commentCoverageText(v.comments.length, displayedComments)
+            : displayedComments
+              ? `显示 ${formatInt(displayedComments)} 条，评论文本未取得`
+              : "评论文本未取得";
           return `
           <div class="row">
             <div><a href="${escapeHtml(v.watchUrl)}">${escapeHtml(v.details.title)}</a><div class="note">${escapeHtml(v.details.channel || "")}</div></div>
@@ -559,7 +613,7 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
           ${commentLabel}
           ${officialLabel}
           ${nonOfficialLabel}
-          <span class="tag neutral">评论样本：${s.totalComments}</span>
+          <span class="tag neutral">${commentCoverageText(s.totalComments, s.displayedCommentTotal)}</span>
         </div>
         <div class="bars">
           <div class="bar-row">
@@ -727,14 +781,14 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
         <div class="subvalue">跨搜索词去重</div>
       </div>
       <div class="card">
-        <div class="label">评论样本</div>
+        <div class="label">已分析评论</div>
         <div class="value">${totals.comments}</div>
-        <div class="subvalue">必要时使用新版评论面板 continuation</div>
+        <div class="subvalue">逐页跟随评论 continuation</div>
       </div>
       <div class="card">
-        <div class="label">评论可见性</div>
-        <div class="value">${totals.commentOkSkins}/${totals.skins}</div>
-        <div class="subvalue">评论样本足够的分组</div>
+        <div class="label">评论覆盖率</div>
+        <div class="value">${totals.commentCoverageLabel}</div>
+        <div class="subvalue">视频显示 ${formatInt(totals.displayedComments)} 条，已分析 ${formatInt(totals.comments)} 条</div>
       </div>
     </section>
 
@@ -751,7 +805,7 @@ function buildDashboardHtml({ generatedAtHuman, windowLabel, skins, totals, note
       <h2>监控规则</h2>
       <p class="note">
         覆盖官方与非官方 MLBB 新皮肤视频，包括 Collector、Epic、Legend、Special、Elite、活动、联动、返场、重做、painted、annual、投票、爆料、展示和评测。
-        评论采样会先读取页面初始结构，必要时再使用 youtubei/v1/next 的新版评论面板 continuation；如果两种方式都失败，仍保留该皮肤命中并标注“评论样本不足”。
+        评论抓取会先读取页面初始结构，必要时使用 youtubei/v1/next 的新版评论面板 continuation 逐页拉取，直到没有下一页、达到视频显示评论数或达到每视频 ${formatInt(MAX_COMMENTS_PER_VIDEO)} 条安全上限；如果 YouTube 只返回部分评论、评论含隐藏/待审核内容或触发限流，仍保留该皮肤命中并标注“部分分析”。
       </p>
     </section>
   </main>
@@ -794,14 +848,19 @@ function writeIndex(versionFile) {
 function buildFailureSnapshotHtml(stamp, error) {
   const previousPath = path.join(ROOT_DIR, "mlbbnewskin-dashboard.html");
   const reason = escapeHtml(String(error?.message || error));
+  const previousRaw = fs.existsSync(previousPath) ? fs.readFileSync(previousPath, "utf8") : "";
+  const legacySamplingCopy = previousRaw.includes("评论样本");
+  const preservedNote = legacySamplingCopy
+    ? "已修正为尽量全量拉取评论的逻辑；但本次未能连通 YouTube，所以下方仍保留上一版旧版抽样分析，不代表完整评论覆盖。下一次成功刷新会显示“已分析评论 / 视频显示评论数”。"
+    : "已保留上一版成功分析，等待下一次自动刷新或手动补跑。";
   const statusPanel = `<!-- latest-run-status:start -->
     <section class="panel" style="border-color: var(--warn); background: #fff7ed;">
       <h2>运行状态</h2>
-      <p class="note">本次自动刷新未能完成，时间：${escapeHtml(stamp.human)}。失败原因：${reason}。已保留上一版成功分析，等待下一次自动刷新或手动补跑。</p>
+      <p class="note">本次自动刷新未能完成，时间：${escapeHtml(stamp.human)}。失败原因：${reason}。${escapeHtml(preservedNote)}</p>
     </section>
     <!-- latest-run-status:end -->`;
 
-  if (!fs.existsSync(previousPath)) {
+  if (!previousRaw) {
     return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -824,7 +883,12 @@ function buildFailureSnapshotHtml(stamp, error) {
 </html>`;
   }
 
-  const previous = fs.readFileSync(previousPath, "utf8");
+  const previous = legacySamplingCopy
+    ? previousRaw
+        .replaceAll("评论：已采样", "评论：旧版抽样")
+        .replaceAll("评论样本", "旧版抽样评论")
+        .replaceAll("评论采样", "旧版评论采样")
+    : previousRaw;
   const cleaned = previous.replace(/<!-- latest-run-status:start -->[\s\S]*?<!-- latest-run-status:end -->\s*/g, "");
   return cleaned.includes("<main>") ? cleaned.replace("<main>", `<main>\n    ${statusPanel}`) : cleaned;
 }
@@ -839,7 +903,7 @@ function writeFailureSnapshot(error) {
   writeIndex(versionFile);
   appendRunLog(stamp, "失败", [
     `失败原因：${String(error?.message || error)}`,
-    "已保留上一版成功分析，并在网页中加入中文运行状态提示。",
+    "已保留上一版成功分析，并在网页中加入中文运行状态提示；如果上一版仍是旧版抽样分析，页面会明确标注。",
   ]);
 
   console.log(
@@ -918,18 +982,27 @@ async function main() {
     const officialVideos = s.videos.filter((v) => isOfficialChannel(v.details.channel));
     const nonOfficialVideos = s.videos.filter((v) => !isOfficialChannel(v.details.channel));
     const comments = s.videos.flatMap((v) => v.comments || []);
+    const displayedCommentTotal = s.videos.reduce(
+      (acc, v) => acc + (Number.isFinite(v.details.commentCount) ? v.details.commentCount : 0),
+      0,
+    );
+    const videosWithDisplayedCounts = s.videos.filter((v) => Number.isFinite(v.details.commentCount) && v.details.commentCount > 0);
+    const commentFullyLoaded =
+      videosWithDisplayedCounts.length > 0 &&
+      videosWithDisplayedCounts.every((v) => v.comments.length >= Math.min(v.details.commentCount, MAX_COMMENTS_PER_VIDEO));
     const sentiment = scoreSentiment(comments);
     const topicTags = extractTopicTags(comments);
     const summary = summarizeFeedback(comments);
-    const commentSampleSufficient = comments.length >= 12;
+    const commentAnalysisSufficient = comments.length >= 12;
 
     const conclusionParts = [];
-    if (sentiment.total === 0) conclusionParts.push("该分组未采样到评论文本。");
+    if (sentiment.total === 0) conclusionParts.push("该分组未取得评论文本。");
     else {
       if (sentiment.goodPct >= 35) conclusionParts.push("整体情绪偏正面。");
       if (sentiment.badPct >= 25) conclusionParts.push("存在明显负面反馈。");
       if (sentiment.warnPct >= 25) conclusionParts.push("价格、活动机制或抽取成本是反复出现的顾虑。");
-      if (!commentSampleSufficient) conclusionParts.push("评论样本不足，仅作方向性参考。");
+      if (!commentAnalysisSufficient) conclusionParts.push("可分析评论较少，仅作方向性参考。");
+      if (displayedCommentTotal > comments.length) conclusionParts.push("本组仍有部分显示评论未进入分析，页面已按覆盖率标注。");
     }
 
     return {
@@ -937,7 +1010,9 @@ async function main() {
       officialVideos,
       nonOfficialVideos,
       totalComments: comments.length,
-      commentSampleSufficient,
+      displayedCommentTotal,
+      commentFullyLoaded,
+      commentAnalysisSufficient,
       sentiment,
       topicTags,
       summary,
@@ -950,9 +1025,13 @@ async function main() {
   const totals = {
     skins: skins.length,
     videos: enriched.length,
-    comments: skins.reduce((acc, s) => acc + s.totalComments, 0),
-    commentOkSkins: skins.filter((s) => s.commentSampleSufficient).length,
+    comments: enriched.reduce((acc, v) => acc + (v.comments?.length || 0), 0),
+    displayedComments: enriched.reduce((acc, v) => acc + (Number.isFinite(v.details.commentCount) ? v.details.commentCount : 0), 0),
+    commentOkSkins: skins.filter((s) => s.totalComments > 0).length,
   };
+  totals.commentCoverageLabel = totals.displayedComments > 0
+    ? `${Math.min(100, Math.round((totals.comments / totals.displayedComments) * 100))}%`
+    : "-";
 
   const windowLabel = "上线 1-7 天内（包含第 1 天和第 7 天）";
   const html = buildDashboardHtml({
@@ -971,8 +1050,10 @@ async function main() {
   appendRunLog(stamp, "成功", [
     `命中 1-7 天内视频：${enriched.length}`,
     `皮肤/主题分组：${totals.skins}`,
-    `评论样本：${totals.comments}`,
-    `评论样本充足分组：${totals.commentOkSkins}/${totals.skins}`,
+    `视频显示评论数：${totals.displayedComments}`,
+    `已分析评论：${totals.comments}`,
+    `评论覆盖率：${totals.commentCoverageLabel}`,
+    `取得评论文本的分组：${totals.commentOkSkins}/${totals.skins}`,
     `版本文件：${versionFile}`,
     ...(notes.length ? notes.map((n) => `运行提示：${n}`) : []),
   ]);
@@ -984,8 +1065,10 @@ async function main() {
         "版本文件": versionFile,
         "1-7 天内视频": enriched.length,
         "皮肤/主题分组": totals.skins,
-        "评论样本": totals.comments,
-        "评论样本充足分组": `${totals.commentOkSkins}/${totals.skins}`,
+        "视频显示评论数": totals.displayedComments,
+        "已分析评论": totals.comments,
+        "评论覆盖率": totals.commentCoverageLabel,
+        "取得评论文本的分组": `${totals.commentOkSkins}/${totals.skins}`,
         "运行提示": notes,
       },
       null,
