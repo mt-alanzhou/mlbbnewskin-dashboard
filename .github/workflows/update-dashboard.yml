@@ -1,0 +1,44 @@
+name: Update MLBBNewSkin dashboard
+
+on:
+  schedule:
+    # 10:00 Asia/Shanghai
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mlbbnewskin-dashboard-update
+  cancel-in-progress: false
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate dashboard
+        run: node tools/update-dashboard.mjs
+
+      - name: Commit dashboard changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html mlbbnewskin-dashboard.html run-log.md dashboard-*.html
+          if git diff --cached --quiet; then
+            echo "No dashboard changes to commit."
+            exit 0
+          fi
+          git commit -m "Update daily MLBBNewSkin dashboard"
+          git push origin HEAD:main
+          git push origin HEAD:gh-pages
