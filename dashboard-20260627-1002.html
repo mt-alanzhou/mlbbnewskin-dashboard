@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="600">
+  <title>MLBB 新皮肤反馈看板</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #667085;
+      --line: #d9e1ea;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --good: #15803d;
+      --good-soft: #dcfce7;
+      --warn: #b45309;
+      --warn-soft: #fef3c7;
+      --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --info: #1d4ed8;
+      --info-soft: #dbeafe;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, "Microsoft YaHei", sans-serif; }
+    header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 18px 24px; position: sticky; top: 0; z-index: 2; }
+    main { max-width: 1220px; margin: 0 auto; padding: 22px; }
+    h1 { font-size: 22px; line-height: 1.25; margin: 0 0 8px; }
+    h2 { font-size: 18px; margin: 0 0 14px; }
+    h3 { font-size: 16px; margin: 0 0 8px; }
+    p { line-height: 1.62; margin: 0 0 12px; }
+    a { color: var(--accent); font-weight: 700; }
+    .meta { color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .card, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    .panel { margin-bottom: 16px; }
+    .label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .value { font-size: 24px; font-weight: 700; line-height: 1.2; }
+    .subvalue { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .skin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .skin-card { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: #fbfdff; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 8px; }
+    .tag { border-radius: 999px; display: inline-flex; align-items: center; min-height: 24px; padding: 4px 9px; font-size: 12px; font-weight: 700; }
+    .tag.good { color: var(--good); background: var(--good-soft); }
+    .tag.warn { color: var(--warn); background: var(--warn-soft); }
+    .tag.bad { color: var(--bad); background: var(--bad-soft); }
+    .tag.info { color: var(--info); background: var(--info-soft); }
+    .tag.neutral { color: var(--muted); background: #eef2f7; }
+    .bars { display: grid; gap: 10px; margin-top: 10px; }
+    .bar-row { display: grid; grid-template-columns: 72px 1fr 42px; gap: 10px; align-items: center; font-size: 13px; }
+    .bar-track { height: 10px; border-radius: 999px; background: #edf2f7; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; }
+    .bar-fill.good { background: var(--good); }
+    .bar-fill.warn { background: var(--warn); }
+    .bar-fill.bad { background: var(--bad); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { line-height: 1.55; margin-bottom: 6px; }
+    .table { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: 1.4fr 0.7fr 0.7fr 1fr; gap: 12px; align-items: start; border-top: 1px solid var(--line); padding-top: 10px; font-size: 13px; }
+    .row.header { border-top: 0; color: var(--muted); font-weight: 700; padding-top: 0; }
+    .note { color: var(--muted); font-size: 13px; line-height: 1.55; }
+    @media (max-width: 860px) {
+      header { padding: 16px; }
+      main { padding: 16px; }
+      .summary-grid, .skin-grid, .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLBB 新皮肤反馈看板</h1>
+    <div class="meta">
+      <span>自动刷新：每 10 分钟</span>
+      <span>监控窗口：视频上线 1-7 天内（含第 1 天和第 7 天）</span>
+      <span>生成时间： 2026-06-08 23:01 (Asia/Shanghai)</span>
+    </div>
+  </header>
+  <main>
+    <!-- latest-run-status:start -->
+    <section class="panel" style="border-color: var(--warn); background: #fff7ed;">
+      <h2>运行状态</h2>
+      <p class="note">本次自动刷新未能完成，时间：2026-06-27 10:02 (Asia/Shanghai)。失败原因：YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests。已保留上一版成功分析，等待下一次自动刷新或手动补跑。</p>
+    </section>
+    <!-- latest-run-status:end -->
+    <section class="summary-grid">
+      <div class="card">
+        <div class="label">皮肤/主题分组</div>
+        <div class="value">7</div>
+        <div class="subvalue">按皮肤或主题合并</div>
+      </div>
+      <div class="card">
+        <div class="label">1-7 天内视频</div>
+        <div class="value">22</div>
+        <div class="subvalue">跨搜索词去重</div>
+      </div>
+      <div class="card">
+        <div class="label">已分析评论</div>
+        <div class="value">559</div>
+        <div class="subvalue">逐页跟随评论 continuation</div>
+      </div>
+      <div class="card">
+        <div class="label">评论覆盖率</div>
+        <div class="value">-</div>
+        <div class="subvalue">视频显示 0 条，已分析 559 条</div>
+      </div>
+    </section>
+
+    
+    <section class="panel">
+      <h2>高信号候选视频</h2>
+      <p class="note">以下是本轮用于分组、筛选和评论采样的高相关候选视频。</p>
+      <div class="table">
+        <div class="row header">
+          <div>视频</div>
+          <div>频道</div>
+          <div>发布时间</div>
+          <div>互动信号</div>
+        </div>
+        
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=275DT-_v_Vw">JUJUTSU KAISEN EVENT RELEASE | EXORCIST 3.0 RESALE | DAWNING STAR RESALE | COLLECTOR IN AUGUST</a></div>
+          <div>Pixie Game MLBB</div>
+          <div>1 天前</div>
+          <div>18,914 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=EYB3jMuUGyU">11.11 Revamp | August Collector | FMVP &amp; Champion Skin | New Squad Skin | New Collector Titians Skin</a></div>
+          <div>Enovia YT</div>
+          <div>1 天前</div>
+          <div>17,436 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=itfPi2QEmmQ">ALL 23 Major Event &amp; Skins Release Date in 2026 | JJK | Exorcist 1,2 &amp; 3 | Drawing Stars | Abyss</a></div>
+          <div>Enovia YT</div>
+          <div>1 天前</div>
+          <div>14,894 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=ss86IfR6B_A">29 Kills!! New Hero Hirara Gilded Embers BASIC Skin!! - New Hero Tryout ~ MLBB</a></div>
+          <div>Gameplay Proplayer</div>
+          <div>1 天前</div>
+          <div>32,751 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=kBb1EiZSC-0">26 Kills!! Yu Zhong ALLSTAR Skin Monster Offlaner!! - Build Top 1 Global Yu Zhong ~ MLBB</a></div>
+          <div>Gameplay Proplayer</div>
+          <div>1 天前</div>
+          <div>23,160 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=FlkADtnFBrU">REVAMPED V.E.N.O.M &amp; MORE EPIC/LIGHTBORN SQUADS WITH STELLAR SUMMON| REPLACEMENT FOR AURORA SUMMON</a></div>
+          <div>KiomeeML</div>
+          <div>1 天前</div>
+          <div>3,678 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=UXAvD7SyZL0">CLAIM FREE Kimmy Collector Skin in MLBB (REDEEM CODE)</a></div>
+          <div>Angel Pia</div>
+          <div>2 天前</div>
+          <div>9,556 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=qzP1OJQmg9Y">Enshrined in Crimson | New Hero Hirara Cinematic Trailer | Mobile Legends: Bang Bang</a></div>
+          <div>Mobile Legends: Bang Bang</div>
+          <div>2 天前</div>
+          <div>208,074 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=01N58EsN3hI">BIG UPDATE: 17 HEROES BUFF/NERF | EXORCIST 3.0 | NEW INTERACTION EMOTES &amp; MANY MORE</a></div>
+          <div>Kazuki Official and Kazuki Official Gaming</div>
+          <div>2 天前</div>
+          <div>27,078 次观看</div>
+        </div>
+        <div class="row">
+          <div><a href="https://www.youtube.com/watch?v=580fWCxGnGI">Enshrined in Crimson | New Hero Hirara Cinematic Trailer | Mobile Legends: Bang Bang</a></div>
+          <div> MLBB Philippines Official</div>
+          <div>2 天前</div>
+          <div>10,473 次观看</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>皮肤分析卡片</h2>
+      <div class="skin-grid">
+        
+      <article class="skin-card">
+        <h3>General MLBB new skins</h3>
+        <div class="meta">
+          <span>未细分/混合</span>
+          <span>视频数：17</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：3</span>
+          <span class="tag neutral">非官方视频：14</span>
+          <span class="tag neutral">427 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:20%"></div></div>
+            <div>20%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:12%"></div></div>
+            <div>12%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:2%"></div></div>
+            <div>2%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">上线时间</span><span class="tag info">特效/动画</span><span class="tag info">抽奖/活动机制</span><span class="tag info">重做/旧皮肤对比</span><span class="tag info">价格/性价比</span><span class="tag info">语音/音效</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 特效和动画质量被认可; 联动呈现有独特感，不像简单复用; 建模和外观较干净</li>
+          <li><strong>主要吐槽：</strong> 价格或性价比顾虑; 抽奖/活动公平性担忧; 被质疑复用或相似度过高</li>
+          <li><strong>购买意愿：</strong> 购买意愿较强; 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=EYB3jMuUGyU&amp;hl=en&amp;gl=US">11.11 Revamp | August Collector | FMVP &amp; Champion Skin | New Squad Skin | New Collector Titians Skin</a><div class="note">Enovia YT</div></div>
+            <div>非官方</div>
+            <div>1 day ago</div>
+            <div>17,436 views · 28 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=itfPi2QEmmQ&amp;hl=en&amp;gl=US">ALL 23 Major Event &amp; Skins Release Date in 2026 | JJK | Exorcist 1,2 &amp; 3 | Drawing Stars | Abyss</a><div class="note">Enovia YT</div></div>
+            <div>非官方</div>
+            <div>1 day ago</div>
+            <div>14,894 views · 21 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=UXAvD7SyZL0&amp;hl=en&amp;gl=US">CLAIM FREE Kimmy Collector Skin in MLBB (REDEEM CODE)</a><div class="note">Angel Pia</div></div>
+            <div>非官方</div>
+            <div>2 days ago</div>
+            <div>9,556 views · 30 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=ss86IfR6B_A&amp;hl=en&amp;gl=US">29 Kills!! New Hero Hirara Gilded Embers BASIC Skin!! - New Hero Tryout ~ MLBB</a><div class="note">Gameplay Proplayer</div></div>
+            <div>非官方</div>
+            <div>1 day ago</div>
+            <div>32,751 views · 24 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=qzP1OJQmg9Y&amp;hl=en&amp;gl=US">Enshrined in Crimson | New Hero Hirara Cinematic Trailer | Mobile Legends: Bang Bang</a><div class="note">Mobile Legends: Bang Bang</div></div>
+            <div>官方</div>
+            <div>2 days ago</div>
+            <div>208,074 views · 30 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=01N58EsN3hI&amp;hl=en&amp;gl=US">BIG UPDATE: 17 HEROES BUFF/NERF | EXORCIST 3.0 | NEW INTERACTION EMOTES &amp; MANY MORE</a><div class="note">Kazuki Official and Kazuki Official Gaming</div></div>
+            <div>非官方</div>
+            <div>2 days ago</div>
+            <div>27,078 views · 26 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=580fWCxGnGI&amp;hl=en&amp;gl=US">Enshrined in Crimson | New Hero Hirara Cinematic Trailer | Mobile Legends: Bang Bang</a><div class="note"> MLBB Philippines Official</div></div>
+            <div>非官方</div>
+            <div>2 days ago</div>
+            <div>10,473 views · 24 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=KruQaENFMQ0&amp;hl=en&amp;gl=US">Worth it to buy? How much is new Kimmy Collector skin? | Mobile Legends Starbound Sentry</a><div class="note">Gosu General TV</div></div>
+            <div>非官方</div>
+            <div>6 days ago</div>
+            <div>63,367 views · 28 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=kBb1EiZSC-0&amp;hl=en&amp;gl=US">26 Kills!! Yu Zhong ALLSTAR Skin Monster Offlaner!! - Build Top 1 Global Yu Zhong ~ MLBB</a><div class="note">Gameplay Proplayer</div></div>
+            <div>非官方</div>
+            <div>1 day ago</div>
+            <div>23,160 views · 30 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=kiERxVgotYc&amp;hl=en&amp;gl=US">New Skin | Roger &quot;Ashbone Gunslinger&quot; | Mobile Legends: Bang Bang</a><div class="note">Mobile Legends: Bang Bang</div></div>
+            <div>官方</div>
+            <div>6 days ago</div>
+            <div>27,116 views · 24 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=PtxFOu34-2M&amp;hl=en&amp;gl=US">UNLOCK ALL MLBB  SKIN 2026 🔥NO SHIZUKU NEEDED ✅</a><div class="note">Crixsytope</div></div>
+            <div>非官方</div>
+            <div>2 days ago</div>
+            <div>9,288 views · 21 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=TwA-MjjNoSA&amp;hl=en&amp;gl=US">Enshrined in Crimson | New Hero Hirara Cinematic Trailer | Mobile Legends: Bang Bang</a><div class="note">Mobile Legends: Bang Bang North America</div></div>
+            <div>官方</div>
+            <div>2 days ago</div>
+            <div>12,497 views · 21 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=FlkADtnFBrU&amp;hl=en&amp;gl=US">REVAMPED V.E.N.O.M &amp; MORE EPIC/LIGHTBORN SQUADS WITH STELLAR SUMMON| REPLACEMENT FOR AURORA SUMMON</a><div class="note">KiomeeML</div></div>
+            <div>非官方</div>
+            <div>1 day ago</div>
+            <div>3,678 views · 22 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=4qPuf-rahYE&amp;hl=en&amp;gl=US">UPDATES: YU ZHONG &amp; ALPHA CC UPDATE|AUGUST CC LINEUP| GALAXY COLLECTOR UPDATE| NEW SQUAD SKIN SURVEY</a><div class="note">KiomeeML</div></div>
+            <div>非官方</div>
+            <div>3 days ago</div>
+            <div>21,768 views · 22 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=2RL9AisAyCk&amp;hl=en&amp;gl=US">EXORCIST 3.0 EVENT RELEASE, JJK EVENT &amp; DAWNING STAR RELEASE, NEW HERO 134 SKILL UPDATE -MLBB UPDATE</a><div class="note">Joni Moba</div></div>
+            <div>非官方</div>
+            <div>2 days ago</div>
+            <div>16,935 views · 24 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=RppP9x_sIdQ&amp;hl=en&amp;gl=US">CHEAPEST METHOD TO GET JUNE COLLECTORS &amp; LUCKYBOX SKINS| COA &amp; DIAMONDS METHOD (2 STRATEGIES)</a><div class="note">KiomeeML</div></div>
+            <div>非官方</div>
+            <div>7 days ago</div>
+            <div>18,164 views · 22 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=5D_imrUZSCk&amp;hl=en&amp;gl=US">HOW MUCH 💎/DIAMONDS FOR KIMMY COLLECTOR SKIN IN NEW EXQUISITE COLLECTION GACHA/DRAWS EVENT | MLBB</a><div class="note">Fire Latios</div></div>
+            <div>非官方</div>
+            <div>7 days ago</div>
+            <div>7,908 views · 30 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Roadmap / multiple skins</h3>
+        <div class="meta">
+          <span>多皮肤汇总</span>
+          <span>视频数：2</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：0</span>
+          <span class="tag neutral">非官方视频：2</span>
+          <span class="tag neutral">60 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:7%"></div></div>
+            <div>7%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:23%"></div></div>
+            <div>23%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:8%"></div></div>
+            <div>8%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">上线时间</span><span class="tag info">抽奖/活动机制</span><span class="tag info">价格/性价比</span><span class="tag info">特效/动画</span><span class="tag info">重做/旧皮肤对比</span><span class="tag info">同类皮肤比较</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 特效和动画质量被认可</li>
+          <li><strong>主要吐槽：</strong> 价格或性价比顾虑; 抽奖/活动公平性担忧</li>
+          <li><strong>购买意愿：</strong> 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=tiv_paTVFbw&amp;hl=en&amp;gl=US">ALL UPCOMING EVENTS &amp; SKINS FOR JUNE | SANRIO COLLAB | ANGELA NEW SKIN | FREE ROGER SKIN &amp; MANY MORE</a><div class="note">Kazuki Official and Kazuki Official Gaming</div></div>
+            <div>非官方</div>
+            <div>6 days ago</div>
+            <div>22,792 views · 30 条评论已分析</div>
+          </div>
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=y3Pca4OGTw8&amp;hl=en&amp;gl=US">EVENTS &amp; SKINS IN JUNE | ASPIRANT RESALE CANCELLED | JJK EVENT RESALE | NEW MARCEL SKIN AND MORE</a><div class="note">Pixie Game MLBB</div></div>
+            <div>非官方</div>
+            <div>6 days ago</div>
+            <div>22,113 views · 30 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Xavier — Legend</h3>
+        <div class="meta">
+          <span>Legend</span>
+          <span>视频数：1</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：0</span>
+          <span class="tag neutral">非官方视频：1</span>
+          <span class="tag neutral">30 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:7%"></div></div>
+            <div>7%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:23%"></div></div>
+            <div>23%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">上线时间</span><span class="tag info">抽奖/活动机制</span><span class="tag info">重做/旧皮肤对比</span><span class="tag info">特效/动画</span><span class="tag info">价格/性价比</span><span class="tag info">同类皮肤比较</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 特效和动画质量被认可</li>
+          <li><strong>主要吐槽：</strong> 抽奖/活动公平性担忧</li>
+          <li><strong>购买意愿：</strong> 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=OQ3OzCfpxiQ&amp;hl=en&amp;gl=US">60 UPCOMING EVENT &amp; SKIN | XAVIER &amp; KAGURA LEGEND | STREET FIGHTER | BLEACH COLLAB | ASPIRANT RESALE</a><div class="note">Pixie Game MLBB</div></div>
+            <div>非官方</div>
+            <div>4 days ago</div>
+            <div>40,682 views · 30 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Kagura — Legend / Magic Wheel</h3>
+        <div class="meta">
+          <span>Legend</span>
+          <span>视频数：1</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：0</span>
+          <span class="tag neutral">非官方视频：1</span>
+          <span class="tag neutral">30 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:7%"></div></div>
+            <div>7%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:23%"></div></div>
+            <div>23%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">上线时间</span><span class="tag info">抽奖/活动机制</span><span class="tag info">重做/旧皮肤对比</span><span class="tag info">特效/动画</span><span class="tag info">价格/性价比</span><span class="tag info">同类皮肤比较</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 特效和动画质量被认可</li>
+          <li><strong>主要吐槽：</strong> 抽奖/活动公平性担忧</li>
+          <li><strong>购买意愿：</strong> 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=OQ3OzCfpxiQ&amp;hl=en&amp;gl=US">60 UPCOMING EVENT &amp; SKIN | XAVIER &amp; KAGURA LEGEND | STREET FIGHTER | BLEACH COLLAB | ASPIRANT RESALE</a><div class="note">Pixie Game MLBB</div></div>
+            <div>非官方</div>
+            <div>4 days ago</div>
+            <div>40,682 views · 30 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>MLBB x Street Fighter</h3>
+        <div class="meta">
+          <span>联动皮肤</span>
+          <span>视频数：1</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：0</span>
+          <span class="tag neutral">非官方视频：1</span>
+          <span class="tag neutral">30 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:7%"></div></div>
+            <div>7%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:23%"></div></div>
+            <div>23%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">上线时间</span><span class="tag info">抽奖/活动机制</span><span class="tag info">重做/旧皮肤对比</span><span class="tag info">特效/动画</span><span class="tag info">价格/性价比</span><span class="tag info">同类皮肤比较</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 特效和动画质量被认可</li>
+          <li><strong>主要吐槽：</strong> 抽奖/活动公平性担忧</li>
+          <li><strong>购买意愿：</strong> 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=OQ3OzCfpxiQ&amp;hl=en&amp;gl=US">60 UPCOMING EVENT &amp; SKIN | XAVIER &amp; KAGURA LEGEND | STREET FIGHTER | BLEACH COLLAB | ASPIRANT RESALE</a><div class="note">Pixie Game MLBB</div></div>
+            <div>非官方</div>
+            <div>4 days ago</div>
+            <div>40,682 views · 30 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>MLBB x Jujutsu Kaisen</h3>
+        <div class="meta">
+          <span>联动皮肤</span>
+          <span>视频数：1</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：0</span>
+          <span class="tag neutral">非官方视频：1</span>
+          <span class="tag neutral">21 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:10%"></div></div>
+            <div>10%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:24%"></div></div>
+            <div>24%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div>
+            <div>0%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">上线时间</span><span class="tag info">抽奖/活动机制</span><span class="tag info">特效/动画</span><span class="tag info">重做/旧皮肤对比</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 特效和动画质量被认可</li>
+          <li><strong>主要吐槽：</strong> 抽奖/活动公平性担忧</li>
+          <li><strong>购买意愿：</strong> 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note"></p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=275DT-_v_Vw&amp;hl=en&amp;gl=US">JUJUTSU KAISEN EVENT RELEASE | EXORCIST 3.0 RESALE | DAWNING STAR RESALE | COLLECTOR IN AUGUST</a><div class="note">Pixie Game MLBB</div></div>
+            <div>非官方</div>
+            <div>1 day ago</div>
+            <div>18,914 views · 21 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      <article class="skin-card">
+        <h3>Harith — Rebel Emberfang (Starlight)</h3>
+        <div class="meta">
+          <span>Starlight</span>
+          <span>视频数：1</span>
+          <span>窗口：上线 1-7 天内（包含第 1 天和第 7 天）</span>
+        </div>
+        <div class="tags">
+          <span class="tag warn">评论：部分分析</span>
+          <span class="tag neutral">官方视频：0</span>
+          <span class="tag neutral">非官方视频：1</span>
+          <span class="tag neutral">21 条评论已分析</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div>正面</div>
+            <div class="bar-track"><div class="bar-fill good" style="width:5%"></div></div>
+            <div>5%</div>
+          </div>
+          <div class="bar-row">
+            <div>价格/活动</div>
+            <div class="bar-track"><div class="bar-fill warn" style="width:52%"></div></div>
+            <div>52%</div>
+          </div>
+          <div class="bar-row">
+            <div>负面</div>
+            <div class="bar-track"><div class="bar-fill bad" style="width:5%"></div></div>
+            <div>5%</div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag info">抽奖/活动机制</span><span class="tag info">价格/性价比</span><span class="tag info">上线时间</span></div>
+        <ul>
+          <li><strong>主要好评：</strong> 没有明显一致的好评信号</li>
+          <li><strong>主要吐槽：</strong> 抽奖/活动公平性担忧</li>
+          <li><strong>购买意愿：</strong> 倾向跳过或继续观望</li>
+        </ul>
+        <p class="note">价格、活动机制或抽取成本是反复出现的顾虑。</p>
+        <div class="table" style="margin-top:12px;">
+          <div class="row header">
+            <div>视频</div>
+            <div>类型</div>
+            <div>发布时间</div>
+            <div>互动/评论</div>
+          </div>
+          
+          <div class="row">
+            <div><a href="https://www.youtube.com/watch?v=IIqU6G4ZbcI&amp;hl=en&amp;gl=US">JUNE STARLIGHT LUCKY BOX DROP RATE IS GOOD?! HARITH NEW STARLIGHT SKIN!- MLBB</a><div class="note">Queenera</div></div>
+            <div>非官方</div>
+            <div>7 days ago</div>
+            <div>3,994 views · 21 条评论已分析</div>
+          </div>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>监控规则</h2>
+      <p class="note">
+        覆盖官方与非官方 MLBB 新皮肤视频，包括 Collector、Epic、Legend、Special、Elite、活动、联动、返场、重做、painted、annual、投票、爆料、展示和评测。
+        评论抓取会先读取页面初始结构，必要时使用 youtubei/v1/next 的新版评论面板 continuation 逐页拉取，直到没有下一页、达到视频显示评论数或达到每视频 5,000 条安全上限；如果 YouTube 只返回部分评论、评论含隐藏/待审核内容或触发限流，仍保留该皮肤命中并标注“部分分析”。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
