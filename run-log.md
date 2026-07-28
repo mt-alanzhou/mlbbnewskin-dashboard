@@ -624,3 +624,37 @@
 - 评论覆盖率：-
 - 取得评论文本的分组：5/5
 - 版本文件：dashboard-20260727-1341.html
+
+### 2026-07-28 12:55 (Asia/Shanghai)
+
+- 结果：成功
+- 命中 1-7 天内视频：23
+- 皮肤/主题分组：5
+- 视频显示评论数：0
+- 已分析评论：0
+- 评论覆盖率：-
+- 取得评论文本的分组：0/5
+- 版本文件：dashboard-20260728-1255.html
+- 运行提示：Failed to fetch details/comments for QM1dQXjYFyc: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for ezKPTPT8eSs: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for 7R2pSOOeRpQ: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for 5WwQZfs-ZXk: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for Ds7vAj_B6mc: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for xvDH-jqzqDk: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for JB5oKyITjLk: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for s8AiCX-xGug: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for 8FITr3Zaejo: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for E0kOI3Tk9ns: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for 9y1XmZNmCrk: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for cSBzo_s5euw: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for iTf8s3N7l6o: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for C9clc7dhXvo: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for 8MJ4Chsl3_s: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for MNcF1S51Cp4: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for FnAU79TFMxw: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for rG5wh222j7s: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for IXYSbuQGwJo: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for 2G3uD8UnBjQ: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for _5aPZt1cA0Y: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for _qg89lVbQtc: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+- 运行提示：Failed to fetch details/comments for y4WOcpDbE9k: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
