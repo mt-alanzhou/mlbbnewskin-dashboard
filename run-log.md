@@ -658,3 +658,9 @@
 - 运行提示：Failed to fetch details/comments for _5aPZt1cA0Y: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
 - 运行提示：Failed to fetch details/comments for _qg89lVbQtc: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
 - 运行提示：Failed to fetch details/comments for y4WOcpDbE9k: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+
+### 2026-07-29 13:11 (Asia/Shanghai)
+
+- 结果：失败
+- 失败原因：YouTube 请求失败，已重试 3 次：fetch failed
+- 已保留上一版成功分析，并在网页中加入中文运行状态提示；如果上一版仍是旧版抽样分析，页面会明确标注。
