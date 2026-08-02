@@ -712,3 +712,14 @@
 - 运行提示：Failed to fetch details/comments for RFyZP8pPke8: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
 - 运行提示：Failed to fetch details/comments for _qg89lVbQtc: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
 - 运行提示：Failed to fetch details/comments for 4CLnO7WH1vA: YouTube 请求失败，已重试 3 次：HTTP 429 Too Many Requests
+
+### 2026-08-02 13:18 (Asia/Shanghai)
+
+- 结果：成功
+- 命中 1-7 天内视频：19
+- 皮肤/主题分组：5
+- 视频显示评论数：0
+- 已分析评论：394
+- 评论覆盖率：-
+- 取得评论文本的分组：5/5
+- 版本文件：dashboard-20260802-1318.html
