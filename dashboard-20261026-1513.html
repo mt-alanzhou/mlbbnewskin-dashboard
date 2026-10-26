@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="600">
+  <title>MLBB 新皮肤反馈看板</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #667085;
+      --line: #d9e1ea;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --good: #15803d;
+      --good-soft: #dcfce7;
+      --warn: #b45309;
+      --warn-soft: #fef3c7;
+      --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --info: #1d4ed8;
+      --info-soft: #dbeafe;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, "Microsoft YaHei", sans-serif; }
+    header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 18px 24px; position: sticky; top: 0; z-index: 2; }
+    main { max-width: 1220px; margin: 0 auto; padding: 22px; }
+    h1 { font-size: 22px; line-height: 1.25; margin: 0 0 8px; }
+    h2 { font-size: 18px; margin: 0 0 14px; }
+    h3 { font-size: 16px; margin: 0 0 8px; }
+    p { line-height: 1.62; margin: 0 0 12px; }
+    a { color: var(--accent); font-weight: 700; }
+    .meta { color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .card, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    .panel { margin-bottom: 16px; }
+    .label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .value { font-size: 24px; font-weight: 700; line-height: 1.2; }
+    .subvalue { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .skin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .skin-card { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: #fbfdff; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 8px; }
+    .tag { border-radius: 999px; display: inline-flex; align-items: center; min-height: 24px; padding: 4px 9px; font-size: 12px; font-weight: 700; }
+    .tag.good { color: var(--good); background: var(--good-soft); }
+    .tag.warn { color: var(--warn); background: var(--warn-soft); }
+    .tag.bad { color: var(--bad); background: var(--bad-soft); }
+    .tag.info { color: var(--info); background: var(--info-soft); }
+    .tag.neutral { color: var(--muted); background: #eef2f7; }
+    .bars { display: grid; gap: 10px; margin-top: 10px; }
+    .bar-row { display: grid; grid-template-columns: 72px 1fr 42px; gap: 10px; align-items: center; font-size: 13px; }
+    .bar-track { height: 10px; border-radius: 999px; background: #edf2f7; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; }
+    .bar-fill.good { background: var(--good); }
+    .bar-fill.warn { background: var(--warn); }
+    .bar-fill.bad { background: var(--bad); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { line-height: 1.55; margin-bottom: 6px; }
+    .table { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: 1.4fr 0.7fr 0.7fr 1fr; gap: 12px; align-items: start; border-top: 1px solid var(--line); padding-top: 10px; font-size: 13px; }
+    .row.header { border-top: 0; color: var(--muted); font-weight: 700; padding-top: 0; }
+    .note { color: var(--muted); font-size: 13px; line-height: 1.55; }
+    @media (max-width: 860px) {
+      header { padding: 16px; }
+      main { padding: 16px; }
+      .summary-grid, .skin-grid, .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLBB 新皮肤反馈看板</h1>
+    <div class="meta">
+      <span>自动刷新：每 10 分钟</span>
+      <span>监控窗口：视频上线 1-7 天内（含第 1 天和第 7 天）</span>
+      <span>生成时间： 2026-10-26 15:13 (Asia/Shanghai)</span>
+    </div>
+  </header>
+  <main>
+    
+    <section class="panel" style="border-color: var(--warn); background: #fff7ed;">
+      <h2>运行状态</h2>
+      <ul><li>No qualifying 1–7 day videos were detected from the current query set.</li></ul>
+    </section>
+    <section class="summary-grid">
+      <div class="card">
+        <div class="label">皮肤/主题分组</div>
+        <div class="value">0</div>
+        <div class="subvalue">按皮肤或主题合并</div>
+      </div>
+      <div class="card">
+        <div class="label">1-7 天内视频</div>
+        <div class="value">0</div>
+        <div class="subvalue">跨搜索词去重</div>
+      </div>
+      <div class="card">
+        <div class="label">已分析评论</div>
+        <div class="value">0</div>
+        <div class="subvalue">逐页跟随评论 continuation</div>
+      </div>
+      <div class="card">
+        <div class="label">评论覆盖率</div>
+        <div class="value">-</div>
+        <div class="subvalue">视频显示 0 条，已分析 0 条</div>
+      </div>
+    </section>
+
+    
+
+    <section class="panel">
+      <h2>皮肤分析卡片</h2>
+      <div class="skin-grid">
+        <div class="skin-card"><h3>未找到精确命中</h3><p class="note">本轮没有检测到上线 1-7 天内的合格视频。</p></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>监控规则</h2>
+      <p class="note">
+        覆盖官方与非官方 MLBB 新皮肤视频，包括 Collector、Epic、Legend、Special、Elite、活动、联动、返场、重做、painted、annual、投票、爆料、展示和评测。
+        评论抓取会先读取页面初始结构，必要时使用 youtubei/v1/next 的新版评论面板 continuation 逐页拉取，直到没有下一页、达到视频显示评论数或达到每视频 5,000 条安全上限；如果 YouTube 只返回部分评论、评论含隐藏/待审核内容或触发限流，仍保留该皮肤命中并标注“部分分析”。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
